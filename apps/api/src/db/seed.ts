@@ -1,8 +1,11 @@
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../app.module';
+import { PublishBlock } from '../modules/booking';
+import { CLOCK, type Clock } from '../shared/clock/clock.port';
+import { seedBlocks } from './seed-blocks';
 import { CreateProgram } from '../modules/enrollment';
-import { CreateAccount } from '../modules/identity';
+import { AuthenticateUser, CreateAccount } from '../modules/identity';
 import { seedPrograms } from './seed-programs';
 import { seedUsers } from './seed-users';
 
@@ -12,6 +15,8 @@ async function seed(): Promise<void> {
   try {
     await seedUsers(app.get(CreateAccount));
     console.log('[db] seed: users ready');
+    await seedBlocks(app.get(PublishBlock), app.get(AuthenticateUser), app.get<Clock>(CLOCK).now());
+    console.log('[db] seed: availability blocks ready');
     await seedPrograms(app.get(CreateProgram));
     console.log('[db] seed: programs ready');
   } finally {

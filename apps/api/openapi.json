@@ -38,6 +38,83 @@
         ]
       }
     },
+    "/api/v1/availability": {
+      "post": {
+        "operationId": "publishBlock",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublishBlockRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlockResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid credentials",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The role is not allowed to do this",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict with the current state",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed or a business rule was violated",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ],
+        "summary": "A coach publishes an availability block",
+        "tags": [
+          "booking"
+        ]
+      }
+    },
     "/api/v1/programs": {
       "get": {
         "operationId": "listPrograms",
@@ -301,6 +378,53 @@
           "displayName",
           "role",
           "timeZone"
+        ]
+      },
+      "PublishBlockRequest": {
+        "type": "object",
+        "properties": {
+          "startsAt": {
+            "type": "string",
+            "example": "2030-01-07T14:00:00.000Z",
+            "description": "UTC instant, on :00 or :30"
+          },
+          "durationMinutes": {
+            "type": "number",
+            "enum": [
+              30,
+              60
+            ],
+            "description": "Block length in minutes"
+          }
+        },
+        "required": [
+          "startsAt",
+          "durationMinutes"
+        ]
+      },
+      "BlockResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "startsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "durationMinutes": {
+            "type": "number",
+            "enum": [
+              30,
+              60
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "startsAt",
+          "durationMinutes"
         ]
       },
       "ProgramResponse": {

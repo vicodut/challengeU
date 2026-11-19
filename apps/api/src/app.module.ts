@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { BookingModule } from './modules/booking';
 import { EnrollmentModule } from './modules/enrollment';
 import { IdentityModule } from './modules/identity';
 import { HealthModule } from './ops/health/health.module';
@@ -12,6 +13,7 @@ import { ProblemDetailsModule } from './shared/errors/problem-details.module';
     DatabaseModule,
     ProblemDetailsModule,
     IdentityModule,
+    BookingModule,
     EnrollmentModule,
     HealthModule,
   ],

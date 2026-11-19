@@ -40,6 +40,28 @@
     "ok": "API {{status}} · database {{database}}",
     "serverTime": "Server time: {{time}}"
   },
+  "availability": {
+    "new": {
+      "title": "New availability block",
+      "startsAt": "Start ({{timeZone}})",
+      "duration": "Duration",
+      "minutes": "{{count}} minutes",
+      "submit": "Publish block",
+      "published": "Block published.",
+      "errors": {
+        "localTime": "That local time does not exist or happens twice (daylight saving change). Pick another time.",
+        "INVALID_BLOCK_DURATION": "A block lasts 30 or 60 minutes.",
+        "BLOCK_NOT_ALIGNED": "A block must start on the hour or half hour.",
+        "BLOCK_IN_PAST": "A block cannot start in the past.",
+        "BLOCK_OVERLAP": "This block overlaps one of your other blocks.",
+        "server": "Something went wrong on the server. Please try again.",
+        "network": "Could not reach the server. Please try again."
+      }
+    },
+    "list": {
+      "new": "Publish a block"
+    }
+  },
   "programs": {
     "title": "Programs",
     "new": "New program",
