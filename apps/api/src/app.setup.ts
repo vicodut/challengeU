@@ -13,9 +13,14 @@ export function createOpenApiDocument(app: INestApplication): OpenAPIObject {
   return SwaggerModule.createDocument(app, config);
 }
 
-/** Shared by main.ts and the test harness so both serve the same surface. */
-export function configureApp(app: INestApplication): void {
+/** Global behaviour that shapes the API surface; applied everywhere an app is built. */
+export function applyGlobalConfig(app: INestApplication): void {
   app.setGlobalPrefix(API_PREFIX);
+}
+
+/** Used by main.ts and the test harness so both serve the same surface. */
+export function configureApp(app: INestApplication): void {
+  applyGlobalConfig(app);
   // Docs live outside the prefix: /docs and /docs-json.
   SwaggerModule.setup('docs', app, createOpenApiDocument(app), { jsonDocumentUrl: 'docs-json' });
 }
