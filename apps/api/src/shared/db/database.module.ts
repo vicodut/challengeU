@@ -1,14 +1,14 @@
 import { Global, Inject, Logger, Module, type OnApplicationShutdown } from '@nestjs/common';
 import { drizzle, type NodePgDatabase } from 'drizzle-orm/node-postgres';
 import type { Pool } from 'pg';
-import * as schema from '../../db/schema';
 import { databaseUrl } from '../config/config';
 import { createPool } from './pool';
 
 export const PG_POOL = Symbol('PG_POOL');
 export const DRIZZLE = Symbol('DRIZZLE');
 
-export type Database = NodePgDatabase<typeof schema>;
+// Each module owns its tables and queries them through the query builder.
+export type Database = NodePgDatabase;
 
 @Global()
 @Module({
@@ -27,7 +27,7 @@ export type Database = NodePgDatabase<typeof schema>;
     {
       provide: DRIZZLE,
       inject: [PG_POOL],
-      useFactory: (pool: Pool): Database => drizzle(pool, { schema }),
+      useFactory: (pool: Pool): Database => drizzle(pool),
     },
   ],
   exports: [DRIZZLE],

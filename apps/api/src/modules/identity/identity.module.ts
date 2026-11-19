@@ -1,0 +1,24 @@
+import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthenticateUser } from './application/authenticate-user';
+import { CreateAccount } from './application/create-account';
+import { GetCurrentUser } from './application/get-current-user';
+import { PASSWORD_HASHER, USER_REPOSITORY } from './application/ports';
+import { AuthGuard } from './controllers/auth.guard';
+import { MeController } from './controllers/me.controller';
+import { Argon2PasswordHasher } from './infrastructure/argon2-password-hasher';
+import { DrizzleUserRepository } from './infrastructure/drizzle-user.repository';
+
+@Module({
+  controllers: [MeController],
+  providers: [
+    AuthenticateUser,
+    CreateAccount,
+    GetCurrentUser,
+    { provide: USER_REPOSITORY, useClass: DrizzleUserRepository },
+    { provide: PASSWORD_HASHER, useClass: Argon2PasswordHasher },
+    { provide: APP_GUARD, useClass: AuthGuard },
+  ],
+  exports: [CreateAccount],
+})
+export class IdentityModule {}

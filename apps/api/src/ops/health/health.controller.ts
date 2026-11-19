@@ -1,15 +1,11 @@
-import { Controller, Get, Inject, ServiceUnavailableException } from '@nestjs/common';
-import {
-  ApiOkResponse,
-  ApiOperation,
-  ApiProperty,
-  ApiServiceUnavailableResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { Controller, Get, Inject } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
 import { sql } from 'drizzle-orm';
 import { Public } from '../../shared/auth/public.decorator';
 import { CLOCK, type Clock } from '../../shared/clock/clock.port';
 import { DRIZZLE, type Database } from '../../shared/db/database.module';
+import { ApiProblemResponses } from '../../shared/errors/api-problem-response.decorator';
+import { DatabaseUnavailableError } from './database-unavailable.error';
 
 export class HealthResponse {
   @ApiProperty({ enum: ['ok'] })
@@ -34,12 +30,12 @@ export class HealthController {
   @Get()
   @ApiOperation({ operationId: 'getHealth', summary: 'Health check (pings the database)' })
   @ApiOkResponse({ type: HealthResponse })
-  @ApiServiceUnavailableResponse({ description: 'The database is unreachable' })
+  @ApiProblemResponses(503)
   async check(): Promise<HealthResponse> {
     try {
       await this.db.execute(sql`select 1`);
     } catch {
-      throw new ServiceUnavailableException('Database unreachable');
+      throw new DatabaseUnavailableError();
     }
     return { status: 'ok', database: 'up', checkedAt: this.clock.now().toISOString() };
   }

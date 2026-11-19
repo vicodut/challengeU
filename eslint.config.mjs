@@ -95,7 +95,10 @@ export default tseslint.config(
       // Another module's root is reachable only through its index.ts (ports and events).
       'boundaries/entry-point': [
         'error',
-        { default: 'allow', rules: [{ target: ['api-module'], disallow: '*', allow: 'index.ts' }] },
+        {
+          default: 'allow',
+          rules: [{ target: ['api-module'], allow: ['index.ts'], disallow: '!index.ts' }],
+        },
       ],
       'boundaries/element-types': [
         'error',
