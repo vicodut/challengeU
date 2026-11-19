@@ -1,14 +1,16 @@
 import { useGetHealth } from '@/api/generated/endpoints/ops/ops';
 import { Badge } from '@/shared/ui/badge';
-import { Card, CardTitle } from '@/shared/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card';
 
 export function HealthStatus() {
   const { data, isPending, isError } = useGetHealth();
 
   return (
     <Card className="max-w-md">
-      <CardTitle>API status</CardTitle>
-      <div className="mt-4" aria-live="polite">
+      <CardHeader>
+        <CardTitle>API status</CardTitle>
+      </CardHeader>
+      <CardContent aria-live="polite">
         {isPending ? (
           <Badge>Checking…</Badge>
         ) : isError || data.status !== 200 ? (
@@ -21,7 +23,7 @@ export function HealthStatus() {
             <p className="text-muted-foreground text-sm">Server time: {data.data.checkedAt}</p>
           </div>
         )}
-      </div>
+      </CardContent>
     </Card>
   );
 }

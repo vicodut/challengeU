@@ -1,15 +1,37 @@
 import type { ComponentProps } from 'react';
 import { cn } from '@/shared/lib/cn';
 
-export function Card({ className, ...props }: ComponentProps<'div'>) {
+function Card({ className, ...props }: ComponentProps<'div'>) {
   return (
     <div
-      className={cn('bg-card text-card-foreground rounded-xl border p-6 shadow-sm', className)}
+      data-slot="card"
+      className={cn(
+        'bg-card text-card-foreground flex flex-col gap-4 rounded-xl border p-6 shadow-sm',
+        className,
+      )}
       {...props}
     />
   );
 }
 
-export function CardTitle({ className, ...props }: ComponentProps<'h2'>) {
-  return <h2 className={cn('text-lg leading-none font-semibold', className)} {...props} />;
+function CardHeader({ className, ...props }: ComponentProps<'div'>) {
+  return (
+    <div data-slot="card-header" className={cn('flex flex-col gap-1.5', className)} {...props} />
+  );
 }
+
+function CardTitle({ className, ...props }: ComponentProps<'div'>) {
+  return (
+    <div
+      data-slot="card-title"
+      className={cn('leading-none font-semibold', className)}
+      {...props}
+    />
+  );
+}
+
+function CardContent({ className, ...props }: ComponentProps<'div'>) {
+  return <div data-slot="card-content" className={cn(className)} {...props} />;
+}
+
+export { Card, CardHeader, CardTitle, CardContent };
