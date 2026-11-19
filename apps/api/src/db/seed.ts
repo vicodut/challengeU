@@ -1,8 +1,9 @@
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../app.module';
-import { CreateProgram } from '../modules/enrollment';
-import { CreateAccount } from '../modules/identity';
+import { AssignCoach, CreateProgram, ListPrograms } from '../modules/enrollment';
+import { CreateAccount, PROFILE_DIRECTORY, type ProfileDirectory } from '../modules/identity';
+import { seedProgramCoaches } from './seed-program-coaches';
 import { seedPrograms } from './seed-programs';
 import { seedUsers } from './seed-users';
 
@@ -14,6 +15,12 @@ async function seed(): Promise<void> {
     console.log('[db] seed: users ready');
     await seedPrograms(app.get(CreateProgram));
     console.log('[db] seed: programs ready');
+    await seedProgramCoaches(
+      app.get(ListPrograms),
+      app.get(AssignCoach),
+      app.get<ProfileDirectory>(PROFILE_DIRECTORY),
+    );
+    console.log('[db] seed: program coaches ready');
   } finally {
     await app.close();
   }

@@ -6,8 +6,13 @@ import { applyApiPrefixAndDocs } from '../../src/app.setup';
 import { CLOCK } from '../../src/shared/clock/clock.port';
 import { seedUsers } from '../../src/db/seed-users';
 import { seedPrograms } from '../../src/db/seed-programs';
-import { CreateProgram } from '../../src/modules/enrollment';
-import { CreateAccount } from '../../src/modules/identity';
+import { seedProgramCoaches } from '../../src/db/seed-program-coaches';
+import { AssignCoach, CreateProgram, ListPrograms } from '../../src/modules/enrollment';
+import {
+  CreateAccount,
+  PROFILE_DIRECTORY,
+  type ProfileDirectory,
+} from '../../src/modules/identity';
 import { FakeClock } from './fake-clock';
 import { resetDatabase } from './reset-database';
 import { TestRoutesController } from './test-routes.controller';
@@ -22,7 +27,7 @@ export interface TestApp {
   /** The in-process HTTP server, ready for supertest. */
   http: Server;
   clock: FakeClock;
-  /** Seeds the five users (admin, coachA/B, studentA/B) and the two programs through the real use cases. */
+  /** Seeds the five users (admin, coachA/B, studentA/B) and the two programs (with their coaches) through the real use cases. */
   seed: () => Promise<void>;
   close: () => Promise<void>;
 }
@@ -51,6 +56,11 @@ export async function createTestApp(options: CreateTestAppOptions = {}): Promise
     seed: async () => {
       await seedUsers(app.get(CreateAccount));
       await seedPrograms(app.get(CreateProgram));
+      await seedProgramCoaches(
+        app.get(ListPrograms),
+        app.get(AssignCoach),
+        app.get<ProfileDirectory>(PROFILE_DIRECTORY),
+      );
     },
     close: () => app.close(),
   };
