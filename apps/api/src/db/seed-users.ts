@@ -4,7 +4,9 @@ import {
   UsernameTakenError,
 } from '../modules/identity';
 
-// Students get no program yet: enrollment (programs, enrollments) is seeded by its own ticket.
+// Seed users, as listed in spec #1 "Persistence".
+// Students have no program until #8 (enrollment); #25 enrolls them. `seedUsers` SKIPS usernames
+// that already exist, so #25 must enroll the existing students, not recreate them.
 export const SEED_USERS: readonly CreateAccountInput[] = [
   {
     username: 'admin',
