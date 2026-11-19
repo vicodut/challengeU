@@ -1,6 +1,6 @@
 // Typed domain errors: `code` is stable, `kind` is mapped to a status by the exception filter
 // (same structural contract as shared/errors/domain-error.ts; the domain may not import shared/).
-type ErrorKind = 'conflict' | 'unprocessable';
+type ErrorKind = 'conflict' | 'unprocessable' | 'not_found';
 
 abstract class BookingError extends Error {
   constructor(
@@ -34,5 +34,11 @@ export class BlockInPastError extends BookingError {
 export class BlockOverlapError extends BookingError {
   constructor() {
     super('BLOCK_OVERLAP', 'conflict', 'The block overlaps another of your blocks');
+  }
+}
+
+export class BlockNotFoundError extends BookingError {
+  constructor() {
+    super('BLOCK_NOT_FOUND', 'not_found', 'No such availability block');
   }
 }

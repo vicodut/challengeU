@@ -42,3 +42,12 @@ export function zonedToUtc(local: string, timeZone: string): Date | null {
   );
   return instants.size === 1 ? new Date([...instants][0] as number) : null;
 }
+
+/** An instant rendered as a readable date and time in an IANA zone. */
+export function formatInZone(instant: string, timeZone: string): string {
+  return new Intl.DateTimeFormat(undefined, {
+    timeZone,
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(new Date(instant));
+}

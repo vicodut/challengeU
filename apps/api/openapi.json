@@ -86,6 +86,118 @@
       }
     },
     "/api/v1/availability": {
+      "get": {
+        "operationId": "listBlocks",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Opaque; the `nextCursor` of the previous page",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "required": false,
+            "in": "query",
+            "description": "Defaults to now",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": false,
+            "in": "query",
+            "description": "Exclusive; no upper bound if unset",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "items",
+                    "nextCursor"
+                  ],
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ListedBlockResponse"
+                      }
+                    },
+                    "nextCursor": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid credentials",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The role is not allowed to do this",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed or a business rule was violated",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ],
+        "summary": "List the caller's availability blocks",
+        "tags": [
+          "booking"
+        ]
+      },
       "post": {
         "operationId": "publishBlock",
         "parameters": [],
@@ -157,6 +269,72 @@
           }
         ],
         "summary": "A coach publishes an availability block",
+        "tags": [
+          "booking"
+        ]
+      }
+    },
+    "/api/v1/availability/{id}": {
+      "get": {
+        "operationId": "getBlock",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListedBlockResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid credentials",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The role is not allowed to do this",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found (or not owned by the caller)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ],
+        "summary": "Open one of the caller's blocks",
         "tags": [
           "booking"
         ]
@@ -617,6 +795,37 @@
         },
         "required": [
           "items"
+        ]
+      },
+      "ListedBlockResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "startsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "durationMinutes": {
+            "type": "number",
+            "enum": [
+              30,
+              60
+            ]
+          },
+          "bookedSessionCount": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Sessions booked in this block"
+          }
+        },
+        "required": [
+          "id",
+          "startsAt",
+          "durationMinutes",
+          "bookedSessionCount"
         ]
       },
       "PublishBlockRequest": {
