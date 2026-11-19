@@ -11,7 +11,7 @@ const layers = ['domain', 'application', 'infrastructure', 'controllers'];
 
 // Web feature folder -> the Orval tag module it owns (src/api/generated/endpoints/<tag>).
 // A feature without an entry may not use any generated endpoint module.
-const featureTags = { ops: 'ops', identity: 'identity' };
+const featureTags = { ops: 'ops', identity: 'identity', enrollment: 'enrollment' };
 
 function webFeatureIsolation() {
   const isolation = (ownTag) => ({
