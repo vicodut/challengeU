@@ -1,4 +1,5 @@
-import { Pool } from 'pg';
+import { databaseUrl } from '../../src/shared/config/config';
+import { withPool } from '../../src/shared/db/pool';
 
 /**
  * Empties every application table (migration bookkeeping lives in the separate `drizzle`
@@ -6,15 +7,12 @@ import { Pool } from 'pg';
  * database and run sequentially (`fileParallelism: false`). A no-op while there are no tables.
  */
 export async function resetDatabase(): Promise<void> {
-  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-  try {
+  await withPool(databaseUrl(), async (pool) => {
     const { rows } = await pool.query<{ tablename: string }>(
       "SELECT tablename FROM pg_tables WHERE schemaname = 'public'",
     );
     if (rows.length === 0) return;
     const tables = rows.map(({ tablename }) => `"${tablename}"`).join(', ');
     await pool.query(`TRUNCATE ${tables} RESTART IDENTITY CASCADE`);
-  } finally {
-    await pool.end();
-  }
+  });
 }
