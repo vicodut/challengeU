@@ -20,6 +20,8 @@ export interface EnrollmentRepository {
   /** Throws `StudentAlreadyEnrolledError` (the primary key is the final guard). */
   add(enrollment: Enrollment): Promise<void>;
   findByStudentId(studentId: string): Promise<EnrollmentView | null>;
+  /** Writes program, status and status date in one statement: all or nothing. */
+  update(enrollment: Enrollment): Promise<void>;
   list(): Promise<EnrollmentView[]>;
   studentIdsOf(programId: string): Promise<string[]>;
 }
