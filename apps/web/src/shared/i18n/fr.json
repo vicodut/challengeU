@@ -40,6 +40,28 @@
     "ok": "API {{status}} · base de données {{database}}",
     "serverTime": "Heure du serveur : {{time}}"
   },
+  "availability": {
+    "new": {
+      "title": "Nouvelle plage de disponibilité",
+      "startsAt": "Début ({{timeZone}})",
+      "duration": "Durée",
+      "minutes": "{{count}} minutes",
+      "submit": "Publier la plage",
+      "published": "Plage publiée.",
+      "errors": {
+        "localTime": "Cette heure locale n'existe pas ou se produit deux fois (changement d'heure). Choisissez une autre heure.",
+        "INVALID_BLOCK_DURATION": "Une plage dure 30 ou 60 minutes.",
+        "BLOCK_NOT_ALIGNED": "Une plage doit commencer à l'heure pile ou à la demie.",
+        "BLOCK_IN_PAST": "Une plage ne peut pas commencer dans le passé.",
+        "BLOCK_OVERLAP": "Cette plage chevauche une de vos autres plages.",
+        "server": "Une erreur est survenue côté serveur. Veuillez réessayer.",
+        "network": "Impossible de joindre le serveur. Veuillez réessayer."
+      }
+    },
+    "list": {
+      "new": "Publier une plage"
+    }
+  },
   "programs": {
     "detail": "Programme",
     "coaches": "Coachs",

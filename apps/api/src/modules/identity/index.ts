@@ -2,6 +2,7 @@
 export { IdentityModule } from './identity.module';
 export { Roles } from './controllers/roles.decorator';
 export { CurrentUser } from './controllers/current-user.decorator';
+export { AuthenticateUser } from './application/authenticate-user';
 export { CreateAccount, type CreateAccountInput } from './application/create-account';
 export type { AuthenticatedUser } from './application/authenticated-user';
 export { UsernameTakenError } from './domain/errors';
