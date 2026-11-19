@@ -1,6 +1,6 @@
 import type { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule, type OpenAPIObject } from '@nestjs/swagger';
-import { DOCS_JSON_PATH, DOCS_PATH } from './shared/auth/public.decorator';
+import { DOCS_JSON_PATH, DOCS_PATH } from './shared/docs/docs-paths';
 
 export const API_PREFIX = 'api/v1';
 
