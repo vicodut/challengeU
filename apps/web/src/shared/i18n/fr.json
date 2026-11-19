@@ -1,5 +1,7 @@
 {
-  "app": { "name": "ChallengeU" },
+  "app": {
+    "name": "ChallengeU"
+  },
   "login": {
     "title": "Connexion",
     "username": "Nom d'utilisateur",
@@ -13,9 +15,22 @@
   },
   "home": {
     "signedInAs": "Connecté en tant que {{name}}",
-    "signedIn": "Connecté",
-    "role": "Rôle : {{role}}",
     "logout": "Se déconnecter"
+  },
+  "area": {
+    "student": "Étudiant",
+    "coach": "Coach",
+    "admin": "Admin"
+  },
+  "nav": {
+    "label": "Navigation principale",
+    "overview": "Accueil",
+    "sessions": "Séances",
+    "availability": "Disponibilités",
+    "users": "Utilisateurs"
+  },
+  "breadcrumb": {
+    "label": "Fil d'Ariane"
   },
   "health": {
     "title": "État de l'API",
