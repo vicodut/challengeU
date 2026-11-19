@@ -33,3 +33,15 @@ export class CoachNotFoundError extends EnrollmentError {
     super('COACH_NOT_FOUND', 'unprocessable', `${id} is not a coach`);
   }
 }
+
+export class StudentAlreadyEnrolledError extends EnrollmentError {
+  constructor(id: string) {
+    super('STUDENT_ALREADY_ENROLLED', 'conflict', `Student ${id} is already enrolled in a program`);
+  }
+}
+
+export class StudentNotFoundError extends EnrollmentError {
+  constructor(id: string) {
+    super('STUDENT_NOT_FOUND', 'not_found', `Student ${id} is not enrolled`);
+  }
+}

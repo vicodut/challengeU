@@ -28,7 +28,8 @@
     "sessions": "Séances",
     "availability": "Disponibilités",
     "users": "Utilisateurs",
-    "programs": "Programmes"
+    "programs": "Programmes",
+    "students": "Étudiants"
   },
   "breadcrumb": {
     "label": "Fil d'Ariane"
@@ -110,6 +111,32 @@
       "invalidName": "Le nom doit comporter de 1 à 100 caractères.",
       "server": "Une erreur est survenue côté serveur. Veuillez réessayer.",
       "network": "Impossible de joindre le serveur. Veuillez réessayer."
+    },
+    "assignStudent": "Assigner un étudiant"
+  },
+  "students": {
+    "title": "Étudiants",
+    "new": "Inscrire un étudiant",
+    "detail": "Étudiant",
+    "empty": "Aucun étudiant pour le moment.",
+    "loadError": "Impossible de charger les étudiants.",
+    "notFound": "Cet étudiant n'existe pas.",
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "displayName": "Nom affiché",
+    "timeZone": "Fuseau horaire",
+    "program": "Programme",
+    "statusLabel": "Statut",
+    "statusChangedAt": "Statut modifié",
+    "create": "Inscrire l'étudiant",
+    "status": {
+      "active": "Actif",
+      "suspended": "Suspendu"
+    },
+    "errors": {
+      "PROGRAM_NOT_FOUND": "Ce programme n'existe pas.",
+      "conflict": "Ce nom d'utilisateur est déjà pris.",
+      "invalid": "Vérifiez les champs : le fuseau horaire doit être une zone IANA valide."
     }
   }
 }

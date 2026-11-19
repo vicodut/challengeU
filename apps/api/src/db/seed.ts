@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../app.module';
 import { PublishBlock } from '../modules/booking';
-import { AssignCoach, CreateProgram, ListPrograms } from '../modules/enrollment';
+import { AssignCoach, CreateProgram, ListPrograms, RegisterStudent } from '../modules/enrollment';
 import {
   AuthenticateUser,
   CreateAccount,
@@ -13,6 +13,7 @@ import { CLOCK, type Clock } from '../shared/clock/clock.port';
 import { seedBlocks } from './seed-blocks';
 import { seedProgramCoaches } from './seed-program-coaches';
 import { seedPrograms } from './seed-programs';
+import { seedStudents } from './seed-students';
 import { seedUsers } from './seed-users';
 
 // Idempotent seed entry point: goes through the real use cases so events and messages exist.
@@ -31,6 +32,8 @@ async function seed(): Promise<void> {
       app.get<ProfileDirectory>(PROFILE_DIRECTORY),
     );
     console.log('[db] seed: program coaches ready');
+    await seedStudents(app.get(ListPrograms), app.get(RegisterStudent));
+    console.log('[db] seed: students enrolled');
   } finally {
     await app.close();
   }

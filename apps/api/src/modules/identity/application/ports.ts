@@ -20,6 +20,8 @@ export interface UserRepository {
   findByUsername(username: string): Promise<User | null>;
   /** Inserts the user and its one-to-one role row atomically. Throws `UsernameTakenError`. */
   add(user: User): Promise<void>;
+  /** Removes the user and its role row; a no-op when the user does not exist. */
+  remove(id: string): Promise<void>;
 }
 
 export interface PasswordHasher {

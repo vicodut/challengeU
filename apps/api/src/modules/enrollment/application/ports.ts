@@ -1,3 +1,4 @@
+import type { Enrollment } from '../domain/enrollment';
 import type { Program } from '../domain/program';
 
 export interface ProgramRepository {
@@ -11,4 +12,17 @@ export interface ProgramRepository {
   add(program: Program): Promise<void>;
 }
 
+export interface EnrollmentView extends Enrollment {
+  programName: string;
+}
+
+export interface EnrollmentRepository {
+  /** Throws `StudentAlreadyEnrolledError` (the primary key is the final guard). */
+  add(enrollment: Enrollment): Promise<void>;
+  findByStudentId(studentId: string): Promise<EnrollmentView | null>;
+  list(): Promise<EnrollmentView[]>;
+  studentIdsOf(programId: string): Promise<string[]>;
+}
+
+export const ENROLLMENT_REPOSITORY = Symbol('EnrollmentRepository');
 export const PROGRAM_REPOSITORY = Symbol('ProgramRepository');

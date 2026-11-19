@@ -28,7 +28,8 @@
     "sessions": "Sessions",
     "availability": "Availability",
     "users": "Users",
-    "programs": "Programs"
+    "programs": "Programs",
+    "students": "Students"
   },
   "breadcrumb": {
     "label": "Breadcrumb"
@@ -110,6 +111,32 @@
       "invalidName": "The name must be 1 to 100 characters.",
       "server": "Something went wrong on the server. Please try again.",
       "network": "Could not reach the server. Please try again."
+    },
+    "assignStudent": "Assign student"
+  },
+  "students": {
+    "title": "Students",
+    "new": "Register student",
+    "detail": "Student",
+    "empty": "No students yet.",
+    "loadError": "Could not load students.",
+    "notFound": "This student does not exist.",
+    "username": "Username",
+    "password": "Password",
+    "displayName": "Display name",
+    "timeZone": "Time zone",
+    "program": "Program",
+    "statusLabel": "Status",
+    "statusChangedAt": "Status changed",
+    "create": "Register student",
+    "status": {
+      "active": "Active",
+      "suspended": "Suspended"
+    },
+    "errors": {
+      "PROGRAM_NOT_FOUND": "This program does not exist.",
+      "conflict": "This username is already taken.",
+      "invalid": "Check the fields: the time zone must be a valid IANA zone."
     }
   }
 }

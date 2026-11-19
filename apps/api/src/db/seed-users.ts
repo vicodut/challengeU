@@ -5,8 +5,7 @@ import {
 } from '../modules/identity';
 
 // Seed users, as listed in spec #1 "Persistence".
-// Students have no program until #8 (enrollment); #25 enrolls them. `seedUsers` SKIPS usernames
-// that already exist, so #25 must enroll the existing students, not recreate them.
+// Students are listed here for tests but created by `seedStudents` (account + enrollment).
 export const SEED_USERS: readonly CreateAccountInput[] = [
   {
     username: 'admin',
@@ -45,9 +44,9 @@ export const SEED_USERS: readonly CreateAccountInput[] = [
   },
 ];
 
-/** Creates the seed users through the real account-creation use case; existing ones are skipped. */
+/** Creates the seed staff accounts through the real account-creation use case; existing ones are skipped. */
 export async function seedUsers(createAccount: CreateAccount): Promise<void> {
-  for (const user of SEED_USERS) {
+  for (const user of SEED_USERS.filter(({ role }) => role !== 'student')) {
     try {
       await createAccount.execute(user);
     } catch (error) {
