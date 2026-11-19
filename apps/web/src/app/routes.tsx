@@ -19,7 +19,7 @@ export const routes = [
     ),
   },
   { path: '/login', element: <LoginPage /> },
-  { path: '/home', loader: requireCredentials, element: <HomePage /> },
+  { path: '/home', loader: requireCredentials, HydrateFallback: () => null, element: <HomePage /> },
 ];
 
 export const router = createBrowserRouter(routes);
