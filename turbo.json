@@ -1,0 +1,46 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "envMode": "loose",
+  "tasks": {
+    "gen:client": {
+      "inputs": ["orval.config.mjs", "../api/openapi.json", "src/shared/http/**"],
+      "outputs": ["src/api/generated/**"]
+    },
+    "build": {
+      "dependsOn": ["gen:client", "^build"],
+      "outputs": ["dist/**"]
+    },
+    "openapi": {
+      "dependsOn": ["build"],
+      "cache": false
+    },
+    "db:migrate": {
+      "dependsOn": ["build"],
+      "cache": false
+    },
+    "db:seed": {
+      "dependsOn": ["db:migrate"],
+      "cache": false
+    },
+    "dev": {
+      "dependsOn": ["gen:client"],
+      "cache": false,
+      "persistent": true
+    },
+    "@challengeu/api#dev": {
+      "dependsOn": ["db:seed"],
+      "cache": false,
+      "persistent": true
+    },
+    "test": {
+      "dependsOn": ["gen:client"],
+      "cache": false
+    },
+    "lint": {
+      "dependsOn": ["gen:client"]
+    },
+    "typecheck": {
+      "dependsOn": ["gen:client"]
+    }
+  }
+}
