@@ -1,50 +1,45 @@
 // Typed domain errors carry a stable `code` and a `kind` the exception filter maps to a status.
-export class InvalidCredentialsError extends Error {
-  readonly code = 'INVALID_CREDENTIALS';
-  readonly kind = 'unauthenticated' as const;
+// The domain is pure (no shared/), so the base class lives here; `kind` values mirror
+// shared/errors/domain-error.ts and are matched structurally by the filter.
+type ErrorKind = 'unauthenticated' | 'forbidden' | 'not_found' | 'conflict' | 'unprocessable';
 
-  constructor() {
-    super('Missing or invalid credentials');
-    this.name = 'InvalidCredentialsError';
+abstract class IdentityError extends Error {
+  constructor(
+    readonly code: string,
+    readonly kind: ErrorKind,
+    message: string,
+  ) {
+    super(message);
+    this.name = new.target.name;
   }
 }
 
-export class RoleForbiddenError extends Error {
-  readonly code = 'ROLE_FORBIDDEN';
-  readonly kind = 'forbidden' as const;
-
+export class InvalidCredentialsError extends IdentityError {
   constructor() {
-    super('Your role is not allowed to do this');
-    this.name = 'RoleForbiddenError';
+    super('INVALID_CREDENTIALS', 'unauthenticated', 'Missing or invalid credentials');
   }
 }
 
-export class UserNotFoundError extends Error {
-  readonly code = 'USER_NOT_FOUND';
-  readonly kind = 'not_found' as const;
-
+export class RoleForbiddenError extends IdentityError {
   constructor() {
-    super('User not found');
-    this.name = 'UserNotFoundError';
+    super('ROLE_FORBIDDEN', 'forbidden', 'Your role is not allowed to do this');
   }
 }
 
-export class UsernameTakenError extends Error {
-  readonly code = 'USERNAME_TAKEN';
-  readonly kind = 'conflict' as const;
+export class UserNotFoundError extends IdentityError {
+  constructor() {
+    super('USER_NOT_FOUND', 'not_found', 'User not found');
+  }
+}
 
+export class UsernameTakenError extends IdentityError {
   constructor(username: string) {
-    super(`The username "${username}" is already taken`);
-    this.name = 'UsernameTakenError';
+    super('USERNAME_TAKEN', 'conflict', `The username "${username}" is already taken`);
   }
 }
 
-export class InvalidTimeZoneError extends Error {
-  readonly code = 'INVALID_TIME_ZONE';
-  readonly kind = 'unprocessable' as const;
-
+export class InvalidTimeZoneError extends IdentityError {
   constructor(timeZone: string) {
-    super(`"${timeZone}" is not an IANA time zone`);
-    this.name = 'InvalidTimeZoneError';
+    super('INVALID_TIME_ZONE', 'unprocessable', `"${timeZone}" is not an IANA time zone`);
   }
 }
