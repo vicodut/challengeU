@@ -1,3 +1,4 @@
+import type { Server } from 'node:http';
 import type { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '../../src/app.module';
@@ -7,6 +8,8 @@ import { FakeClock } from './fake-clock';
 
 export interface TestApp {
   app: INestApplication;
+  /** The in-process HTTP server, ready for supertest. */
+  http: Server;
   clock: FakeClock;
   close: () => Promise<void>;
 }
@@ -23,5 +26,5 @@ export async function createTestApp(clock: FakeClock = new FakeClock()): Promise
   const app = moduleRef.createNestApplication();
   configureApp(app);
   await app.init();
-  return { app, clock, close: () => app.close() };
+  return { app, http: app.getHttpServer() as Server, clock, close: () => app.close() };
 }
