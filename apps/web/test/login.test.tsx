@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { redirectToLoginOnUnauthorized } from '@/app/unauthorized-redirect';
 import { routes } from '@/app/routes';
 import { encodeCredentials, getCredentials, saveCredentials } from '@/shared/auth/session';
+import { LOGIN_PATH } from '@/shared/routes/paths';
 import { server } from './server';
 
 const me = {
@@ -77,6 +78,61 @@ describe('login and logout', () => {
 
     expect((await screen.findByRole('alert')).textContent).toBe('Wrong username or password.');
     expect(app.router.state.location.pathname).toBe('/login');
+    expect(getCredentials()).toBeNull();
+  });
+
+  function attemptLogin(password: string) {
+    fireEvent.change(screen.getByLabelText('Username'), { target: { value: 'studentA' } });
+    fireEvent.change(screen.getByLabelText('Password'), { target: { value: password } });
+    fireEvent.click(screen.getByRole('button', { name: 'Log in' }));
+  }
+
+  it('keeps already stored credentials when a login attempt is rejected', async () => {
+    const stored = encodeCredentials('studentA', 'secret');
+    saveCredentials(stored);
+    server.use(http.get('/api/v1/me', () => HttpResponse.json(problem, { status: 401 })));
+    const app = renderApp(LOGIN_PATH);
+    stop = app.stop;
+
+    attemptLogin('nope');
+
+    expect((await screen.findByRole('alert')).textContent).toBe('Wrong username or password.');
+    expect(getCredentials()).toBe(stored);
+  });
+
+  it.each([
+    ['a 500 JSON problem', () => HttpResponse.json({ ...problem, status: 500 }, { status: 500 })],
+    [
+      'a 503 with an HTML body',
+      () =>
+        new HttpResponse('<html>Bad gateway</html>', {
+          status: 503,
+          headers: { 'content-type': 'text/html' },
+        }),
+    ],
+  ])('shows a server error, not a wrong password, on %s', async (_name, respond) => {
+    server.use(http.get('/api/v1/me', respond));
+    const app = renderApp(LOGIN_PATH);
+    stop = app.stop;
+
+    attemptLogin('secret');
+
+    expect((await screen.findByRole('alert')).textContent).toBe(
+      'Something went wrong on the server. Please try again.',
+    );
+    expect(getCredentials()).toBeNull();
+  });
+
+  it('shows a network error message when the server cannot be reached', async () => {
+    server.use(http.get('/api/v1/me', () => HttpResponse.error()));
+    const app = renderApp(LOGIN_PATH);
+    stop = app.stop;
+
+    attemptLogin('secret');
+
+    expect((await screen.findByRole('alert')).textContent).toBe(
+      'Could not reach the server. Please try again.',
+    );
     expect(getCredentials()).toBeNull();
   });
 
