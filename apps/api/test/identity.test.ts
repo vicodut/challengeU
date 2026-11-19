@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { SEED_USERS, seedUsers } from '../src/db/seed-users';
+import { SEED_USERS } from '../src/db/seed-users';
 import { CreateAccount } from '../src/modules/identity';
 import { basicAuthHeader } from './helpers/basic-auth';
 import { createTestApp, type TestApp } from './helpers/create-test-app';
@@ -92,7 +92,7 @@ describe('identity: Basic auth and current user', () => {
   });
 
   it('seeding twice is idempotent', async () => {
-    await seedUsers(testApp.app.get(CreateAccount));
+    await testApp.seed();
     const pool = testApp.app.get<Pool>(PG_POOL);
     const { rows } = await pool.query<{ n: string }>('SELECT count(*) AS n FROM users');
 
