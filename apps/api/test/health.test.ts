@@ -53,7 +53,14 @@ describe('health when the database is unreachable', () => {
     try {
       const response = await request(testApp.http).get('/api/v1/health').expect(503);
 
-      expect(response.body).toMatchObject({ statusCode: 503 });
+      expect(response.body).toMatchObject({
+        status: 503,
+        code: 'DATABASE_UNAVAILABLE',
+        title: 'Service Unavailable',
+        type: expect.any(String) as string,
+        detail: expect.any(String) as string,
+      });
+      expect(response.headers['content-type']).toContain('application/problem+json');
     } finally {
       await testApp.close();
     }
