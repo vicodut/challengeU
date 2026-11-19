@@ -11,7 +11,13 @@ ChallengeU take-home: a coaching session booking app. The source of truth for *w
 ## Ticket pipeline (orchestrator)
 
 1. **Pick** a ticket whose blockers are all closed. Run one ticket at a time until #2 (scaffold) is merged. After that, run frontier tickets in parallel when their worktrees can use separate databases and ports.
-2. **Dispatch** a Sonnet 5.5 implementer with `isolation: "worktree"` on branch `feat/<issue>-<slug>`. The task prompt repeats the implementer rules below verbatim, because a worktree run may not load this file.
+2. **Dispatch**:
+   - Create the ticket's worktree through Orca, never with raw `git worktree`:
+     ```
+     orca worktree create --repo name:challengeU --name <issue>-<slug> --branch feat/<issue>-<slug> --base-branch main --issue <issue> --json
+     ```
+   - Then dispatch a Sonnet 5.5 implementer **without** agent `isolation`, told to work only inside that worktree path.
+   - The task prompt repeats the implementer rules below verbatim, because a worktree run may not load this file.
 3. **Review** the branch with `/mattpocock-skills:code-review` on Opus 5.5. Resume the *same* implementer to fix every confirmed finding, then review the new commits again. After 2 rounds, list any remaining findings in the PR body and flag them to the human.
 4. **Screenshot**: if the ticket touches `apps/web`, run the app and capture at least one screenshot of each screen the ticket touches with Claude in Chrome. Push the images to the orphan `pr-assets` branch and embed them in the PR body by URL.
 5. **Open the PR** with `/mattpocock-skills:pr`:
@@ -20,7 +26,7 @@ ChallengeU take-home: a coaching session booking app. The source of truth for *w
    - at least one Mermaid diagram: the request or event flow for API work, the route and component structure for web work;
    - a **Decisions** section listing the implementer's technical assumptions.
 6. **Hand off**: stop and wait for the human. The human either approves (the orchestrator then merges with a merge commit) or merges it themselves. Never squash.
-7. **Clean up** after the merge: remove the worktree, delete the local and remote branch, and confirm the ticket is closed.
+7. **Clean up** after the merge: remove the worktree with `orca worktree rm`, delete the local and remote branch, and confirm the ticket is closed.
 
 The pipeline is done for a ticket when its PR is merged, its worktree and branch are gone, and its issue is closed.
 
