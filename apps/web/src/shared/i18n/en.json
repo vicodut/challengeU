@@ -41,6 +41,15 @@
     "serverTime": "Server time: {{time}}"
   },
   "programs": {
+    "detail": "Program",
+    "coaches": "Coaches",
+    "students": "Students",
+    "noCoaches": "No coaches assigned yet.",
+    "noStudents": "No students yet.",
+    "pickCoach": "Coach",
+    "assign": "Assign coach",
+    "notFound": "This program does not exist.",
+    "assignError": "Could not assign this coach. Please try again.",
     "title": "Programs",
     "new": "New program",
     "name": "Name",

@@ -41,6 +41,15 @@
     "serverTime": "Heure du serveur : {{time}}"
   },
   "programs": {
+    "detail": "Programme",
+    "coaches": "Coachs",
+    "students": "Étudiants",
+    "noCoaches": "Aucun coach assigné pour le moment.",
+    "noStudents": "Aucun étudiant pour le moment.",
+    "pickCoach": "Coach",
+    "assign": "Assigner le coach",
+    "notFound": "Ce programme n'existe pas.",
+    "assignError": "Impossible d'assigner ce coach. Veuillez réessayer.",
     "title": "Programmes",
     "new": "Nouveau programme",
     "name": "Nom",
