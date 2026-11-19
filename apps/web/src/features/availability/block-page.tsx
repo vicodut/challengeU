@@ -26,6 +26,11 @@ export function BlockPage({ timeZone }: { timeZone: string }) {
           <dd>{block.bookedSessionCount}</dd>
         </dl>
       )}
+      {block ? (
+        <Link to="delete" className="text-sm underline">
+          {t('availability.detail.delete')}
+        </Link>
+      ) : null}
       <Link to=".." relative="path" className="text-sm underline">
         {t('availability.detail.back')}
       </Link>
