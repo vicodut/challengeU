@@ -60,7 +60,21 @@
       }
     },
     "list": {
-      "new": "Publier une plage"
+      "new": "Publier une plage",
+      "loading": "Chargement…",
+      "loadError": "Impossible de charger vos plages.",
+      "empty": "Aucune plage à venir.",
+      "booked_one": "{{count}} séance réservée",
+      "booked_other": "{{count}} séances réservées",
+      "previous": "Précédent",
+      "next": "Suivant"
+    },
+    "detail": {
+      "title": "Plage de disponibilité",
+      "start": "Début ({{timeZone}})",
+      "booked": "Séances réservées",
+      "notFound": "Plage introuvable.",
+      "back": "Retour à mes plages"
     }
   },
   "programs": {

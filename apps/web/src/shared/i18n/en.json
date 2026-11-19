@@ -60,7 +60,21 @@
       }
     },
     "list": {
-      "new": "Publish a block"
+      "new": "Publish a block",
+      "loading": "Loading…",
+      "loadError": "Could not load your blocks.",
+      "empty": "No upcoming blocks.",
+      "booked_one": "{{count}} booked session",
+      "booked_other": "{{count}} booked sessions",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "detail": {
+      "title": "Availability block",
+      "start": "Start ({{timeZone}})",
+      "booked": "Booked sessions",
+      "notFound": "Block not found.",
+      "back": "Back to my blocks"
     }
   },
   "programs": {
