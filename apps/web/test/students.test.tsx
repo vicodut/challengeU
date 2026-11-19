@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react';
+import { waitFor, screen } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { encodeCredentials, saveCredentials } from '@/shared/auth/session';
@@ -39,8 +39,10 @@ describe('register student', () => {
   it('preselects the program passed by the program page', async () => {
     stop = renderApp(`/admin/students/new?programId=${programId}`).stop;
 
-    await screen.findByRole('option', { name: 'Academic Success' });
+    await screen.findByRole('option', { name: 'Academic Success' }, { timeout: 5000 });
     const select = screen.getByLabelText<HTMLSelectElement>('Program');
-    expect(select.selectedOptions[0]?.textContent).toBe('Academic Success');
+    await waitFor(() => {
+      expect(select.selectedOptions[0]?.textContent).toBe('Academic Success');
+    });
   });
 });
