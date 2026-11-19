@@ -54,6 +54,11 @@ export function RoleArea({ role }: { role: Role }) {
           <Button onClick={endSession}>{t('home.logout')}</Button>
         </div>
       </header>
+      {me.studentStatus === 'suspended' && (
+        <div role="alert" className="bg-destructive/10 border-b p-3 text-center text-sm">
+          {t('home.suspended')}
+        </div>
+      )}
       <main className="mx-auto flex w-full max-w-3xl flex-col gap-6 p-8">
         <Breadcrumbs />
         <Outlet />

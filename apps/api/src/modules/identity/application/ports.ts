@@ -15,6 +15,11 @@ export interface ProfileDirectory {
   listCoaches(): Promise<Profile[]>;
 }
 
+/** Implemented by the enrollment module: a student's enrollment status, null when not enrolled. */
+export interface StudentStatusLookup {
+  statusOf(studentId: string): Promise<'active' | 'suspended' | null>;
+}
+
 export interface UserRepository {
   findById(id: string): Promise<User | null>;
   findByUsername(username: string): Promise<User | null>;
@@ -31,4 +36,5 @@ export interface PasswordHasher {
 
 export const USER_REPOSITORY = Symbol('UserRepository');
 export const PASSWORD_HASHER = Symbol('PasswordHasher');
+export const STUDENT_STATUS_LOOKUP = Symbol('StudentStatusLookup');
 export const PROFILE_DIRECTORY = Symbol('ProfileDirectory');

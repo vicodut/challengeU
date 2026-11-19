@@ -1,10 +1,19 @@
 import { Controller, Get } from '@nestjs/common';
-import { ApiBasicAuth, ApiOkResponse, ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBasicAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiProperty,
+  ApiPropertyOptional,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ApiProblemResponses } from '../../../shared/errors/api-problem-response.decorator';
 import type { AuthenticatedUser } from '../application/authenticated-user';
 import { GetCurrentUser } from '../application/get-current-user';
 import { ROLES, type Role } from '../domain/role';
 import { CurrentUser } from './current-user.decorator';
+
+const ENROLLMENT_STATUS_VALUES = ['active', 'suspended'];
 
 export class MeResponse {
   @ApiProperty({ format: 'uuid' })
@@ -21,6 +30,12 @@ export class MeResponse {
 
   @ApiProperty({ example: 'America/Toronto', description: 'IANA time zone' })
   timeZone!: string;
+
+  @ApiPropertyOptional({
+    enum: ENROLLMENT_STATUS_VALUES,
+    description: 'Enrollment status; present for students only',
+  })
+  studentStatus?: 'active' | 'suspended';
 }
 
 @ApiTags('identity')

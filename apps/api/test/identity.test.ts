@@ -32,6 +32,7 @@ describe('identity: Basic auth and current user', () => {
       displayName: user.displayName,
       role: user.role,
       timeZone: user.timeZone,
+      ...(user.role === 'student' && { studentStatus: 'active' }),
     });
   });
 

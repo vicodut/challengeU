@@ -15,7 +15,8 @@
   },
   "home": {
     "signedInAs": "Signed in as {{name}}",
-    "logout": "Log out"
+    "logout": "Log out",
+    "suspended": "Your account is suspended. Please contact the enrollment team."
   },
   "area": {
     "student": "Student",
@@ -117,6 +118,11 @@
     "statusLabel": "Status",
     "statusChangedAt": "Status changed",
     "create": "Register student",
+    "action": {
+      "suspended": "Suspend student",
+      "active": "Reactivate student"
+    },
+    "statusError": "Could not change the status. Please try again.",
     "status": {
       "active": "Active",
       "suspended": "Suspended"
