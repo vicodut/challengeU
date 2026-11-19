@@ -1,9 +1,5 @@
-import type { Server } from 'node:http';
-import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { AppModule } from '../src/app.module';
-import { applyApiPrefixAndDocs } from '../src/app.setup';
 import { PG_POOL } from '../src/shared/db/database.module';
 import { createPool } from '../src/shared/db/pool';
 import { createTestApp, type TestApp } from './helpers/create-test-app';
@@ -47,22 +43,19 @@ describe('health and docs', () => {
 
 describe('health when the database is unreachable', () => {
   it('answers 503 instead of crashing', async () => {
-    const moduleRef = await Test.createTestingModule({ imports: [AppModule] })
-      .overrideProvider(PG_POOL)
+    const testApp = await createTestApp({
       // Nothing listens on port 1: the ping fails fast with ECONNREFUSED.
-      .useFactory({ factory: () => createPool('postgres://nobody:nopass@127.0.0.1:1/none') })
-      .compile();
-    const app = moduleRef.createNestApplication({ logger: false });
-    applyApiPrefixAndDocs(app);
-    await app.init();
+      configure: (builder) =>
+        builder
+          .overrideProvider(PG_POOL)
+          .useFactory({ factory: () => createPool('postgres://nobody:nopass@127.0.0.1:1/none') }),
+    });
     try {
-      const response = await request(app.getHttpServer() as Server)
-        .get('/api/v1/health')
-        .expect(503);
+      const response = await request(testApp.http).get('/api/v1/health').expect(503);
 
       expect(response.body).toMatchObject({ statusCode: 503 });
     } finally {
-      await app.close();
+      await testApp.close();
     }
   });
 });

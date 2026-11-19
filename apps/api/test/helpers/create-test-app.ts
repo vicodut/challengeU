@@ -1,11 +1,16 @@
 import type { Server } from 'node:http';
 import type { INestApplication } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
+import { Test, type TestingModuleBuilder } from '@nestjs/testing';
 import { AppModule } from '../../src/app.module';
 import { applyApiPrefixAndDocs } from '../../src/app.setup';
 import { CLOCK } from '../../src/shared/clock/clock.port';
 import { FakeClock } from './fake-clock';
 import { resetDatabase } from './reset-database';
+
+export interface CreateTestAppOptions {
+  /** Adjust the module before it compiles, e.g. `(builder) => builder.overrideProvider(X).useValue(y)`. */
+  configure?: (builder: TestingModuleBuilder) => TestingModuleBuilder;
+}
 
 export interface TestApp {
   app: INestApplication;
@@ -19,13 +24,13 @@ export interface TestApp {
  * Resets the test database, then boots the real application in-process against the test database
  * (DATABASE_URL is pointed at it by vitest.config.mts), with a controllable Clock.
  */
-export async function createTestApp(): Promise<TestApp> {
+export async function createTestApp(options: CreateTestAppOptions = {}): Promise<TestApp> {
   const clock = new FakeClock();
   await resetDatabase();
-  const moduleRef = await Test.createTestingModule({ imports: [AppModule] })
+  const builder = Test.createTestingModule({ imports: [AppModule] })
     .overrideProvider(CLOCK)
-    .useValue(clock)
-    .compile();
+    .useValue(clock);
+  const moduleRef = await (options.configure?.(builder) ?? builder).compile();
   const app = moduleRef.createNestApplication();
   applyApiPrefixAndDocs(app);
   await app.init();
