@@ -1,12 +1,9 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
-import { createMemoryRouter, RouterProvider } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { redirectToLoginOnUnauthorized } from '@/app/unauthorized-redirect';
-import { routes } from '@/app/routes';
 import { encodeCredentials, getCredentials, saveCredentials } from '@/shared/auth/session';
 import { LOGIN_PATH } from '@/shared/routes/paths';
+import { renderApp } from './render-app';
 import { server } from './server';
 
 const me = {
@@ -22,18 +19,6 @@ const problem = {
   status: 401,
   code: 'UNAUTHENTICATED',
 };
-
-function renderApp(path: string) {
-  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  const router = createMemoryRouter(routes, { initialEntries: [path] });
-  const stop = redirectToLoginOnUnauthorized(router, queryClient);
-  render(
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>,
-  );
-  return { router, stop };
-}
 
 let stop: (() => void) | undefined;
 beforeEach(() => {
@@ -60,7 +45,7 @@ describe('login and logout', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Log in' }));
 
     expect(await screen.findByText('Signed in as Student A')).toBeTruthy();
-    expect(app.router.state.location.pathname).toBe('/home');
+    expect(app.router.state.location.pathname).toBe('/student');
     const expected = encodeCredentials('studentA', 'secret');
     expect(getCredentials()).toBe(expected);
     expect(seen).toContain(`Basic ${expected}`);
