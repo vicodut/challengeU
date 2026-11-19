@@ -1,7 +1,14 @@
-import { createBrowserRouter } from 'react-router';
+import { createBrowserRouter, redirect } from 'react-router';
 import { HealthStatus } from '@/features/ops';
+import { HomePage, LoginPage } from '@/features/identity';
+import { getCredentials } from '@/shared/auth/session';
 
-export const router = createBrowserRouter([
+function requireCredentials() {
+  if (!getCredentials()) return redirect('/login');
+  return null;
+}
+
+export const routes = [
   {
     path: '/',
     element: (
@@ -11,4 +18,8 @@ export const router = createBrowserRouter([
       </main>
     ),
   },
-]);
+  { path: '/login', element: <LoginPage /> },
+  { path: '/home', loader: requireCredentials, element: <HomePage /> },
+];
+
+export const router = createBrowserRouter(routes);
