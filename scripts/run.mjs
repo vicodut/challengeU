@@ -3,7 +3,7 @@
 import { spawnSync } from 'node:child_process';
 import { ensureEnv, rootDir } from './env.mjs';
 
-const env = ensureEnv();
+const env = await ensureEnv();
 
 function run(command, args, options = {}) {
   const result = spawnSync(command, args, { cwd: rootDir, stdio: 'inherit', ...options });

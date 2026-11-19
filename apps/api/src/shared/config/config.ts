@@ -1,11 +1,15 @@
 // Environment access lives here only. Values come from the per-worktree `.env`
-// (loaded by the root scripts) with local defaults for direct invocations.
-const DEFAULT_DATABASE_URL = 'postgres://challengeu:challengeu@localhost:5432/challengeu_dev';
+// (generated and loaded by scripts/env.mjs); there are no literal defaults to keep in sync.
+function required(name: string): string {
+  const value = process.env[name];
+  if (!value) throw new Error(`Missing environment variable ${name} (see .env.example)`);
+  return value;
+}
 
 export function databaseUrl(): string {
-  return process.env.DATABASE_URL ?? DEFAULT_DATABASE_URL;
+  return required('DATABASE_URL');
 }
 
 export function apiPort(): number {
-  return Number(process.env.API_PORT ?? 3000);
+  return Number(required('API_PORT'));
 }

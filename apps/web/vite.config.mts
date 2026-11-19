@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import { ensureEnv } from '../../scripts/env.mjs';
 
-const env = ensureEnv();
+const env = await ensureEnv();
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
@@ -13,12 +13,12 @@ export default defineConfig({
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
   server: {
-    port: Number(env.WEB_PORT ?? 5173),
+    port: Number(env.WEB_PORT),
     strictPort: true,
     // Same-origin in dev: the browser only ever talks to the web port.
     proxy: {
-      '/api': `http://localhost:${env.API_PORT ?? 3000}`,
-      '/docs': `http://localhost:${env.API_PORT ?? 3000}`,
+      '/api': `http://localhost:${env.API_PORT}`,
+      '/docs': `http://localhost:${env.API_PORT}`,
     },
   },
   test: {
