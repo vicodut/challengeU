@@ -19,8 +19,15 @@
     {
       "idx": 2,
       "version": "7",
-      "when": 1795129556456,
-      "tag": "0002_booking",
+      "when": 1795129528616,
+      "tag": "0002_enrollment",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1795130258607,
+      "tag": "0003_booking",
       "breakpoints": true
     }
   ]

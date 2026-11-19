@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { createBrowserRouter, Link, Navigate, redirect } from 'react-router';
 import { NewBlockPage } from '@/features/availability';
 import { HealthStatus } from '@/features/ops';
+import { NewProgramPage, ProgramsPage } from '@/features/enrollment';
 import { LoginPage } from '@/features/identity';
 import { useGetMe } from '@/api/generated/endpoints/identity/identity';
 import { getCredentials } from '@/shared/auth/session';
@@ -103,6 +104,14 @@ export const routes = [
             path: 'users',
             handle: { crumb: 'nav.users' },
             element: <PlaceholderPage titleKey="nav.users" />,
+          },
+          {
+            path: 'programs',
+            handle: { crumb: 'nav.programs' },
+            children: [
+              { index: true, element: <ProgramsPage /> },
+              { path: 'new', handle: { crumb: 'programs.new' }, element: <NewProgramPage /> },
+            ],
           },
         ],
       },
