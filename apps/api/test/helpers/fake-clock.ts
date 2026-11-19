@@ -1,12 +1,10 @@
-import { Clock } from '../../src/shared/clock/clock';
+import type { Clock } from '../../src/shared/clock/clock.port';
 
 /** Controllable clock for tests: pin it with `set`, move it with `advance`. */
-export class FakeClock extends Clock {
-  constructor(private current: Date = new Date('2030-01-01T00:00:00.000Z')) {
-    super();
-  }
+export class FakeClock implements Clock {
+  constructor(private current: Date = new Date('2030-01-01T00:00:00.000Z')) {}
 
-  override now(): Date {
+  now(): Date {
     return new Date(this.current);
   }
 

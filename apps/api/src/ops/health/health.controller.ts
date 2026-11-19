@@ -8,7 +8,7 @@ import {
 } from '@nestjs/swagger';
 import { sql } from 'drizzle-orm';
 import { Public } from '../../shared/auth/public.decorator';
-import { Clock } from '../../shared/clock/clock';
+import { CLOCK, type Clock } from '../../shared/clock/clock.port';
 import { DRIZZLE, type Database } from '../../shared/db/database.module';
 
 export class HealthResponse {
@@ -28,7 +28,7 @@ export class HealthResponse {
 export class HealthController {
   constructor(
     @Inject(DRIZZLE) private readonly db: Database,
-    private readonly clock: Clock,
+    @Inject(CLOCK) private readonly clock: Clock,
   ) {}
 
   @Get()
