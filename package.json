@@ -15,7 +15,7 @@
     "typecheck": "turbo run typecheck",
     "openapi": "node scripts/run.mjs openapi",
     "db:up": "node scripts/run.mjs db-up",
-    "db:down": "docker compose down",
+    "db:down": "node scripts/run.mjs db-down",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },

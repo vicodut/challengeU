@@ -1,4 +1,4 @@
-// Entry point behind `pnpm dev|test|build|openapi|db:up`.
+// Entry point behind `pnpm dev|test|build|openapi|db:up|db:down`.
 // Prepares the environment and the database, then delegates to Turborepo.
 import { spawnSync } from 'node:child_process';
 import { ensureEnv, rootDir } from './env.mjs';
@@ -61,6 +61,9 @@ switch (command) {
     break;
   case 'db-up':
     databaseUp();
+    break;
+  case 'db-down':
+    run('docker', ['compose', 'down']);
     break;
   default:
     console.error(`Unknown command: ${command ?? '(none)'}`);
