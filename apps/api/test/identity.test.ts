@@ -5,9 +5,8 @@ import { CreateAccount } from '../src/modules/identity';
 import { basicAuthHeader } from './helpers/basic-auth';
 import { createTestApp, type TestApp } from './helpers/create-test-app';
 import { PG_POOL } from '../src/shared/db/database.module';
+import { PROBLEM_CONTENT_TYPE } from '../src/shared/errors/problem-details';
 import type { Pool } from 'pg';
-
-const PROBLEM = 'application/problem+json';
 
 describe('identity: Basic auth and current user', () => {
   let testApp: TestApp;
@@ -42,7 +41,7 @@ describe('identity: Basic auth and current user', () => {
       .set('Authorization', basicAuthHeader('studentA', 'nope'))
       .expect(401);
 
-    expect(response.headers['content-type']).toContain(PROBLEM);
+    expect(response.headers['content-type']).toContain(PROBLEM_CONTENT_TYPE);
     expect(response.body).toEqual({
       type: 'urn:challengeu:problem:invalid-credentials',
       title: 'Unauthorized',
@@ -141,7 +140,7 @@ describe('role restrictions', () => {
       .set('Authorization', basicAuthHeader(user, password))
       .expect(403);
 
-    expect(response.headers['content-type']).toContain(PROBLEM);
+    expect(response.headers['content-type']).toContain(PROBLEM_CONTENT_TYPE);
     expect(response.body).toMatchObject({ status: 403, code: 'ROLE_FORBIDDEN' });
   });
 
@@ -182,7 +181,7 @@ describe('Problem Details error contract', () => {
       .send({ name: 'ab', extra: 1 })
       .expect(422);
 
-    expect(response.headers['content-type']).toContain(PROBLEM);
+    expect(response.headers['content-type']).toContain(PROBLEM_CONTENT_TYPE);
     expect(response.body).toMatchObject({
       status: 422,
       code: 'VALIDATION_ERROR',
