@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { createBrowserRouter, Navigate, redirect } from 'react-router';
-import { BlockPage, BlocksPage, NewBlockPage } from '@/features/availability';
+import { BlockPage, DeleteBlockPage, BlocksPage, NewBlockPage } from '@/features/availability';
 import { HealthStatus } from '@/features/ops';
 import { NewProgramPage, ProgramDetailPage, ProgramsPage } from '@/features/enrollment';
 import { LoginPage } from '@/features/identity';
@@ -82,6 +82,11 @@ export const routes = [
                 path: ':id',
                 handle: { crumb: 'availability.detail.title' },
                 element: <ZonedRoute page={BlockPage} />,
+              },
+              {
+                path: ':blockId/delete',
+                handle: { crumb: 'availability.delete.title' },
+                element: <DeleteBlockPage />,
               },
             ],
           },

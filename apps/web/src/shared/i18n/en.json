@@ -73,7 +73,19 @@
       "start": "Start ({{timeZone}})",
       "booked": "Booked sessions",
       "notFound": "Block not found.",
+      "delete": "Delete this block",
       "back": "Back to my blocks"
+    },
+    "delete": {
+      "title": "Delete availability block",
+      "question": "Delete this block? This cannot be undone.",
+      "confirm": "Yes, delete",
+      "cancel": "Cancel",
+      "errors": {
+        "BLOCK_HAS_BOOKINGS": "This block has bookings and cannot be deleted.",
+        "BLOCK_NOT_FOUND": "Block not found.",
+        "server": "Something went wrong on the server. Please try again."
+      }
     }
   },
   "programs": {
