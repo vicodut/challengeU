@@ -5,7 +5,7 @@ import { ProgramNameTakenError } from '../domain/errors';
 import type { Program } from '../domain/program';
 import { DRIZZLE, type Database } from '../../../shared/db/database.module';
 import { isUniqueViolation } from '../../../shared/db/pg-errors';
-import { programs } from './schema';
+import { programCoaches, programs } from './schema';
 
 @Injectable()
 export class DrizzleProgramRepository implements ProgramRepository {
@@ -14,6 +14,23 @@ export class DrizzleProgramRepository implements ProgramRepository {
   async findByName(name: string): Promise<Program | null> {
     const [row] = await this.db.select().from(programs).where(eq(programs.name, name));
     return row ?? null;
+  }
+
+  async findById(id: string): Promise<Program | null> {
+    const [row] = await this.db.select().from(programs).where(eq(programs.id, id));
+    return row ?? null;
+  }
+
+  async coachIds(programId: string): Promise<string[]> {
+    const rows = await this.db
+      .select({ coachId: programCoaches.coachId })
+      .from(programCoaches)
+      .where(eq(programCoaches.programId, programId));
+    return rows.map((row) => row.coachId);
+  }
+
+  async addCoach(programId: string, coachId: string): Promise<void> {
+    await this.db.insert(programCoaches).values({ programId, coachId }).onConflictDoNothing();
   }
 
   list(): Promise<Program[]> {

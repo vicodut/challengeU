@@ -2,3 +2,5 @@
 export { EnrollmentModule } from './enrollment.module';
 export { CreateProgram } from './application/create-program';
 export { ProgramNameTakenError } from './domain/errors';
+export { ListPrograms } from './application/list-programs';
+export { AssignCoach } from './application/assign-coach';

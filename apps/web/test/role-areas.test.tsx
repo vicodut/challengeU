@@ -99,4 +99,27 @@ describe('admin programs', () => {
     expect(await screen.findByText('Leadership')).toBeTruthy();
     expect(app.router.state.location.pathname).toBe('/admin/programs');
   });
+
+  it('assigns a coach from the picker on the program page', async () => {
+    signInAs('admin');
+    const coaches = [{ id: 'c1', displayName: 'Coach A', timeZone: 'America/Toronto' }];
+    const assigned: { id: string; displayName: string }[] = [];
+    server.use(
+      http.get('/api/v1/programs/p1', () =>
+        HttpResponse.json({ id: 'p1', name: 'Academic Success', coaches: assigned, students: [] }),
+      ),
+      http.get('/api/v1/coaches', () => HttpResponse.json({ items: coaches })),
+      http.post('/api/v1/programs/p1/coaches', () => {
+        assigned.push({ id: 'c1', displayName: 'Coach A' });
+        return new HttpResponse(null, { status: 204 });
+      }),
+    );
+    stop = renderApp('/admin/programs/p1').stop;
+
+    expect(await screen.findByRole('heading', { name: 'Academic Success' })).toBeTruthy();
+    fireEvent.change(await screen.findByLabelText('Coach'), { target: { value: 'c1' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Assign coach' }));
+
+    expect(await screen.findByText('Coach A', { selector: 'li' })).toBeTruthy();
+  });
 });
