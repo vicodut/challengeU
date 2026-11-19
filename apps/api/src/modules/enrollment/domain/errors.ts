@@ -2,7 +2,7 @@
 abstract class EnrollmentError extends Error {
   constructor(
     readonly code: string,
-    readonly kind: 'conflict' | 'unprocessable',
+    readonly kind: 'conflict' | 'unprocessable' | 'not_found',
     message: string,
   ) {
     super(message);
@@ -19,5 +19,17 @@ export class ProgramNameTakenError extends EnrollmentError {
 export class InvalidProgramNameError extends EnrollmentError {
   constructor() {
     super('INVALID_PROGRAM_NAME', 'unprocessable', 'A program name is 1 to 100 characters');
+  }
+}
+
+export class ProgramNotFoundError extends EnrollmentError {
+  constructor(id: string) {
+    super('PROGRAM_NOT_FOUND', 'not_found', `Program ${id} does not exist`);
+  }
+}
+
+export class CoachNotFoundError extends EnrollmentError {
+  constructor(id: string) {
+    super('COACH_NOT_FOUND', 'unprocessable', `${id} is not a coach`);
   }
 }

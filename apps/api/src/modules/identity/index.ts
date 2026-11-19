@@ -6,3 +6,4 @@ export { CreateAccount, type CreateAccountInput } from './application/create-acc
 export type { AuthenticatedUser } from './application/authenticated-user';
 export { UsernameTakenError } from './domain/errors';
 export { ROLES, type Role } from './domain/role';
+export { PROFILE_DIRECTORY, type Profile, type ProfileDirectory } from './application/ports';

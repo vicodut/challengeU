@@ -38,6 +38,53 @@
         ]
       }
     },
+    "/api/v1/coaches": {
+      "get": {
+        "operationId": "listCoaches",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoachListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid credentials",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The role is not allowed to do this",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ],
+        "summary": "List all coaches (admin)",
+        "tags": [
+          "enrollment"
+        ]
+      }
+    },
     "/api/v1/programs": {
       "get": {
         "operationId": "listPrograms",
@@ -155,6 +202,161 @@
           }
         ],
         "summary": "Create a program (admin)",
+        "tags": [
+          "enrollment"
+        ]
+      }
+    },
+    "/api/v1/programs/{id}": {
+      "get": {
+        "operationId": "getProgram",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramDetailResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid credentials",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The role is not allowed to do this",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found (or not owned by the caller)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed or a business rule was violated",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ],
+        "summary": "A program with its coaches and students (admin)",
+        "tags": [
+          "enrollment"
+        ]
+      }
+    },
+    "/api/v1/programs/{id}/coaches": {
+      "post": {
+        "operationId": "assignCoach",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignCoachRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "The coach is assigned"
+          },
+          "401": {
+            "description": "Missing or invalid credentials",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The role is not allowed to do this",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found (or not owned by the caller)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed or a business rule was violated",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ],
+        "summary": "Assign a coach to a program (admin, idempotent)",
         "tags": [
           "enrollment"
         ]
@@ -303,6 +505,43 @@
           "timeZone"
         ]
       },
+      "CoachResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "displayName": {
+            "type": "string",
+            "example": "Coach A"
+          },
+          "timeZone": {
+            "type": "string",
+            "example": "America/Toronto",
+            "description": "IANA time zone"
+          }
+        },
+        "required": [
+          "id",
+          "displayName",
+          "timeZone"
+        ]
+      },
+      "CoachListResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CoachResponse"
+            }
+          }
+        },
+        "required": [
+          "items"
+        ]
+      },
       "ProgramResponse": {
         "type": "object",
         "properties": {
@@ -345,6 +584,66 @@
         },
         "required": [
           "name"
+        ]
+      },
+      "ProgramMemberResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "displayName": {
+            "type": "string",
+            "example": "Coach A"
+          }
+        },
+        "required": [
+          "id",
+          "displayName"
+        ]
+      },
+      "ProgramDetailResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "example": "Academic Success"
+          },
+          "coaches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProgramMemberResponse"
+            }
+          },
+          "students": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProgramMemberResponse"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "coaches",
+          "students"
+        ]
+      },
+      "AssignCoachRequest": {
+        "type": "object",
+        "properties": {
+          "coachId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "coachId"
         ]
       },
       "HealthResponse": {
