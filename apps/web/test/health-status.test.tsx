@@ -24,8 +24,8 @@ describe('HealthStatus', () => {
 
     renderHealthStatus();
 
-    expect(await screen.findByText('API ok · database up')).toBeInTheDocument();
-    expect(screen.getByText(/2030-01-01T00:00:00.000Z/)).toBeInTheDocument();
+    expect(await screen.findByText('API ok · database up')).toBeTruthy();
+    expect(screen.getByText(/2030-01-01T00:00:00.000Z/)).toBeTruthy();
   });
 
   it('shows the API as unavailable when the health endpoint answers 503', async () => {
@@ -33,6 +33,6 @@ describe('HealthStatus', () => {
 
     renderHealthStatus();
 
-    expect(await screen.findByText('API unavailable')).toBeInTheDocument();
+    expect(await screen.findByText('API unavailable')).toBeTruthy();
   });
 });
