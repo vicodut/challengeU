@@ -1,0 +1,22 @@
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-challengeu}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-challengeu}
+      POSTGRES_DB: ${DB_NAME:-challengeu_dev}
+      DB_NAME_TEST: ${DB_NAME_TEST:-challengeu_test}
+    ports:
+      - '${DB_PORT:?run pnpm db:up, which generates .env}:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./scripts/db-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER:-challengeu} -d ${DB_NAME:-challengeu_dev}']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  pgdata:

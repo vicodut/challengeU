@@ -1,0 +1,75 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1/health": {
+      "get": {
+        "operationId": "getHealth",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable"
+          }
+        },
+        "summary": "Health check (pings the database)",
+        "tags": [
+          "ops"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "ChallengeU API",
+    "description": "Coaching session booking",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "basic": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok"
+            ]
+          },
+          "database": {
+            "type": "string",
+            "enum": [
+              "up"
+            ]
+          },
+          "checkedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Server time (from the Clock port)"
+          }
+        },
+        "required": [
+          "status",
+          "database",
+          "checkedAt"
+        ]
+      }
+    }
+  }
+}

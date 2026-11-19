@@ -1,2 +1,9 @@
 # Claude Code agent worktrees (local, per-run)
 .claude/worktrees/
+node_modules
+dist
+.turbo
+.env
+*.tsbuildinfo
+coverage
+apps/web/src/api/generated
