@@ -2,7 +2,7 @@ import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { SEED_USERS, seedUsers } from '../src/db/seed-users';
 import { CreateAccount } from '../src/modules/identity';
-import { basic } from './helpers/basic-auth';
+import { basicAuthHeader } from './helpers/basic-auth';
 import { createTestApp, type TestApp } from './helpers/create-test-app';
 import { PG_POOL } from '../src/shared/db/database.module';
 import type { Pool } from 'pg';
@@ -24,7 +24,7 @@ describe('identity: Basic auth and current user', () => {
   it.each(SEED_USERS)('logs in $username and returns their own profile', async (user) => {
     const response = await request(testApp.http)
       .get('/api/v1/me')
-      .set('Authorization', basic(user.username, user.password))
+      .set('Authorization', basicAuthHeader(user.username, user.password))
       .expect(200);
 
     expect(response.body).toEqual({
@@ -39,7 +39,7 @@ describe('identity: Basic auth and current user', () => {
   it('rejects a wrong password with a 401 Problem Details', async () => {
     const response = await request(testApp.http)
       .get('/api/v1/me')
-      .set('Authorization', basic('studentA', 'nope'))
+      .set('Authorization', basicAuthHeader('studentA', 'nope'))
       .expect(401);
 
     expect(response.headers['content-type']).toContain(PROBLEM);
@@ -55,7 +55,7 @@ describe('identity: Basic auth and current user', () => {
   it('rejects an unknown user, a missing header and a malformed header with 401', async () => {
     await request(testApp.http)
       .get('/api/v1/me')
-      .set('Authorization', basic('ghost', 'x$123'))
+      .set('Authorization', basicAuthHeader('ghost', 'x$123'))
       .expect(401);
     await request(testApp.http).get('/api/v1/me').expect(401);
     await request(testApp.http).get('/api/v1/me').set('Authorization', 'Bearer abc').expect(401);
@@ -128,7 +128,7 @@ describe('role restrictions', () => {
   it('lets the allowed role through', async () => {
     await request(testApp.http)
       .get('/api/v1/test/admin-only')
-      .set('Authorization', basic('admin', 'admin$123'))
+      .set('Authorization', basicAuthHeader('admin', 'admin$123'))
       .expect(200);
   });
 
@@ -138,7 +138,7 @@ describe('role restrictions', () => {
   ])('rejects %s on an admin-only route with 403 Problem Details', async (user, password) => {
     const response = await request(testApp.http)
       .get('/api/v1/test/admin-only')
-      .set('Authorization', basic(user, password))
+      .set('Authorization', basicAuthHeader(user, password))
       .expect(403);
 
     expect(response.headers['content-type']).toContain(PROBLEM);
@@ -148,11 +148,11 @@ describe('role restrictions', () => {
   it('accepts any of several allowed roles and rejects the rest', async () => {
     await request(testApp.http)
       .get('/api/v1/test/coach-or-student')
-      .set('Authorization', basic('coachB', 'coachB$123'))
+      .set('Authorization', basicAuthHeader('coachB', 'coachB$123'))
       .expect(200);
     await request(testApp.http)
       .get('/api/v1/test/coach-or-student')
-      .set('Authorization', basic('admin', 'admin$123'))
+      .set('Authorization', basicAuthHeader('admin', 'admin$123'))
       .expect(403);
   });
 
