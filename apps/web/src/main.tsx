@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router';
+import '@/shared/i18n';
 import { Providers, queryClient } from '@/app/providers';
 import { router } from '@/app/routes';
 import { redirectToLoginOnUnauthorized } from '@/app/unauthorized-redirect';
