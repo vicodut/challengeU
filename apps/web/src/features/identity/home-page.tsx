@@ -1,22 +1,12 @@
-import { useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router';
 import { useGetMe } from '@/api/generated/endpoints/identity/identity';
-import { clearCredentials } from '@/shared/auth/session';
+import { endSession } from '@/shared/auth/session';
 import { Button } from '@/shared/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card';
 
 /** Placeholder protected page: role areas and breadcrumbs arrive in a later ticket. */
 export function HomePage() {
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const { data } = useGetMe();
   const me = data?.status === 200 ? data.data : null;
-
-  function logout() {
-    clearCredentials();
-    queryClient.clear();
-    void navigate('/login', { replace: true });
-  }
 
   return (
     <main className="mx-auto flex max-w-3xl flex-col gap-6 p-8">
@@ -27,7 +17,7 @@ export function HomePage() {
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           {me ? <p className="text-muted-foreground text-sm">Role: {me.role}</p> : null}
-          <Button onClick={logout}>Log out</Button>
+          <Button onClick={endSession}>Log out</Button>
         </CardContent>
       </Card>
     </main>

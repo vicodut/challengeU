@@ -2,9 +2,10 @@ import { createBrowserRouter, redirect } from 'react-router';
 import { HealthStatus } from '@/features/ops';
 import { HomePage, LoginPage } from '@/features/identity';
 import { getCredentials } from '@/shared/auth/session';
+import { HOME_PATH, LOGIN_PATH } from '@/shared/routes/paths';
 
 function requireCredentials() {
-  if (!getCredentials()) return redirect('/login');
+  if (!getCredentials()) return redirect(LOGIN_PATH);
   return null;
 }
 
@@ -18,8 +19,13 @@ export const routes = [
       </main>
     ),
   },
-  { path: '/login', element: <LoginPage /> },
-  { path: '/home', loader: requireCredentials, HydrateFallback: () => null, element: <HomePage /> },
+  { path: LOGIN_PATH, element: <LoginPage /> },
+  {
+    path: HOME_PATH,
+    loader: requireCredentials,
+    HydrateFallback: () => null,
+    element: <HomePage />,
+  },
 ];
 
 export const router = createBrowserRouter(routes);

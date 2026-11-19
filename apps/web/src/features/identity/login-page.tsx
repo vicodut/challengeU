@@ -1,14 +1,14 @@
 import { useState, type SubmitEvent } from 'react';
 import { useNavigate } from 'react-router';
 import { getMe } from '@/api/generated/endpoints/identity/identity';
-import { basicAuthorization, encodeCredentials, saveCredentials } from '@/shared/auth/session';
+import { encodeCredentials, saveCredentials } from '@/shared/auth/session';
+import { candidateCredentials } from '@/shared/http/mutator';
+import { HOME_PATH } from '@/shared/routes/paths';
 import { Button } from '@/shared/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card';
 import { Input } from '@/shared/ui/input';
 
-export const HOME_PATH = '/home';
-
-function text(value: FormDataEntryValue | null): string {
+function formString(value: FormDataEntryValue | null): string {
   return typeof value === 'string' ? value : '';
 }
 
@@ -20,17 +20,23 @@ export function LoginPage() {
   async function submit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    const credentials = encodeCredentials(text(form.get('username')), text(form.get('password')));
+    const credentials = encodeCredentials(
+      formString(form.get('username')),
+      formString(form.get('password')),
+    );
     setSubmitting(true);
     setError(null);
     try {
-      // Not stored yet: send the candidate credentials explicitly, keep them only if accepted.
-      const response = await getMe({ headers: { Authorization: basicAuthorization(credentials) } });
-      if (response.status === 200) {
+      // Not stored yet: the mutator sends the candidate credentials; keep them only if accepted.
+      const response = await getMe(candidateCredentials(credentials));
+      const status: number = response.status;
+      if (status === 200) {
         saveCredentials(credentials);
         await navigate(HOME_PATH, { replace: true });
-      } else {
+      } else if (status === 401) {
         setError('Wrong username or password.');
+      } else {
+        setError('Something went wrong on the server. Please try again.');
       }
     } catch {
       setError('Could not reach the server. Please try again.');
