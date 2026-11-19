@@ -1,4 +1,19 @@
+import type { Role } from '../domain/role';
 import type { User } from '../domain/user';
+
+/** What other modules may know about a user: no credentials. */
+export interface Profile {
+  id: string;
+  displayName: string;
+  timeZone: string;
+  role: Role;
+}
+
+/** Read-only profile lookups for other modules (they reference users by ID only). */
+export interface ProfileDirectory {
+  findByIds(ids: string[]): Promise<Profile[]>;
+  listCoaches(): Promise<Profile[]>;
+}
 
 export interface UserRepository {
   findById(id: string): Promise<User | null>;
@@ -14,3 +29,4 @@ export interface PasswordHasher {
 
 export const USER_REPOSITORY = Symbol('UserRepository');
 export const PASSWORD_HASHER = Symbol('PasswordHasher');
+export const PROFILE_DIRECTORY = Symbol('ProfileDirectory');

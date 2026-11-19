@@ -25,7 +25,9 @@ export function ProgramsPage() {
         <ul className="flex flex-col gap-2">
           {items.map((program) => (
             <li key={program.id} className="rounded-md border p-3">
-              {program.name}
+              <Link to={`/admin/programs/${program.id}`} className="underline">
+                {program.name}
+              </Link>
             </li>
           ))}
         </ul>

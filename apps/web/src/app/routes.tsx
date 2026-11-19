@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { createBrowserRouter, Link, Navigate, redirect } from 'react-router';
 import { NewBlockPage } from '@/features/availability';
 import { HealthStatus } from '@/features/ops';
-import { NewProgramPage, ProgramsPage } from '@/features/enrollment';
+import { NewProgramPage, ProgramDetailPage, ProgramsPage } from '@/features/enrollment';
 import { LoginPage } from '@/features/identity';
 import { useGetMe } from '@/api/generated/endpoints/identity/identity';
 import { getCredentials } from '@/shared/auth/session';
@@ -111,6 +111,11 @@ export const routes = [
             children: [
               { index: true, element: <ProgramsPage /> },
               { path: 'new', handle: { crumb: 'programs.new' }, element: <NewProgramPage /> },
+              {
+                path: ':programId',
+                handle: { crumb: 'programs.detail' },
+                element: <ProgramDetailPage />,
+              },
             ],
           },
         ],
