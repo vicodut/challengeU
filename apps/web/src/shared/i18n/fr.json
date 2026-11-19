@@ -27,7 +27,8 @@
     "overview": "Accueil",
     "sessions": "Séances",
     "availability": "Disponibilités",
-    "users": "Utilisateurs"
+    "users": "Utilisateurs",
+    "programs": "Programmes"
   },
   "breadcrumb": {
     "label": "Fil d'Ariane"
@@ -38,5 +39,20 @@
     "unavailable": "API indisponible",
     "ok": "API {{status}} · base de données {{database}}",
     "serverTime": "Heure du serveur : {{time}}"
+  },
+  "programs": {
+    "title": "Programmes",
+    "new": "Nouveau programme",
+    "name": "Nom",
+    "create": "Créer le programme",
+    "loading": "Chargement…",
+    "loadError": "Impossible de charger les programmes.",
+    "empty": "Aucun programme pour le moment.",
+    "errors": {
+      "nameTaken": "Un programme portant ce nom existe déjà.",
+      "invalidName": "Le nom doit comporter de 1 à 100 caractères.",
+      "server": "Une erreur est survenue côté serveur. Veuillez réessayer.",
+      "network": "Impossible de joindre le serveur. Veuillez réessayer."
+    }
   }
 }

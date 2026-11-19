@@ -27,7 +27,8 @@
     "overview": "Overview",
     "sessions": "Sessions",
     "availability": "Availability",
-    "users": "Users"
+    "users": "Users",
+    "programs": "Programs"
   },
   "breadcrumb": {
     "label": "Breadcrumb"
@@ -38,5 +39,20 @@
     "unavailable": "API unavailable",
     "ok": "API {{status}} · database {{database}}",
     "serverTime": "Server time: {{time}}"
+  },
+  "programs": {
+    "title": "Programs",
+    "new": "New program",
+    "name": "Name",
+    "create": "Create program",
+    "loading": "Loading…",
+    "loadError": "Could not load programs.",
+    "empty": "No programs yet.",
+    "errors": {
+      "nameTaken": "A program with this name already exists.",
+      "invalidName": "The name must be 1 to 100 characters.",
+      "server": "Something went wrong on the server. Please try again.",
+      "network": "Could not reach the server. Please try again."
+    }
   }
 }

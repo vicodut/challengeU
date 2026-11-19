@@ -5,6 +5,8 @@ import { AppModule } from '../../src/app.module';
 import { applyApiPrefixAndDocs } from '../../src/app.setup';
 import { CLOCK } from '../../src/shared/clock/clock.port';
 import { seedUsers } from '../../src/db/seed-users';
+import { seedPrograms } from '../../src/db/seed-programs';
+import { CreateProgram } from '../../src/modules/enrollment';
 import { CreateAccount } from '../../src/modules/identity';
 import { FakeClock } from './fake-clock';
 import { resetDatabase } from './reset-database';
@@ -20,7 +22,7 @@ export interface TestApp {
   /** The in-process HTTP server, ready for supertest. */
   http: Server;
   clock: FakeClock;
-  /** Seeds the five users (admin, coachA/B, studentA/B) through the real use case. */
+  /** Seeds the five users (admin, coachA/B, studentA/B) and the two programs through the real use cases. */
   seed: () => Promise<void>;
   close: () => Promise<void>;
 }
@@ -46,7 +48,10 @@ export async function createTestApp(options: CreateTestAppOptions = {}): Promise
     app,
     http: app.getHttpServer() as Server,
     clock,
-    seed: () => seedUsers(app.get(CreateAccount)),
+    seed: async () => {
+      await seedUsers(app.get(CreateAccount));
+      await seedPrograms(app.get(CreateProgram));
+    },
     close: () => app.close(),
   };
 }

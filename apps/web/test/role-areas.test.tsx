@@ -1,4 +1,4 @@
-import { screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { encodeCredentials, saveCredentials } from '@/shared/auth/session';
@@ -56,5 +56,47 @@ describe('role areas', () => {
     const crumbs = within(await screen.findByRole('navigation', { name: 'Breadcrumb' }));
     expect(crumbs.getByRole('link', { name: 'Student' }).getAttribute('href')).toBe('/student');
     expect(crumbs.getByText('Sessions').getAttribute('aria-current')).toBe('page');
+  });
+});
+
+describe('admin programs', () => {
+  it('lists programs and shows the breadcrumb trail', async () => {
+    signInAs('admin');
+    server.use(
+      http.get('/api/v1/programs', () =>
+        HttpResponse.json({ items: [{ id: 'a', name: 'Academic Success' }] }),
+      ),
+    );
+    stop = renderApp('/admin/programs').stop;
+
+    expect(await screen.findByText('Academic Success')).toBeTruthy();
+    const crumbs = within(await screen.findByRole('navigation', { name: 'Breadcrumb' }));
+    expect(crumbs.getByRole('link', { name: 'Admin' }).getAttribute('href')).toBe('/admin');
+    expect(crumbs.getByText('Programs').getAttribute('aria-current')).toBe('page');
+  });
+
+  it('creates a program from /admin/programs/new and returns to the list', async () => {
+    signInAs('admin');
+    const items = [{ id: 'a', name: 'Academic Success' }];
+    server.use(
+      http.get('/api/v1/programs', () => HttpResponse.json({ items })),
+      http.post('/api/v1/programs', async ({ request }) => {
+        const { name } = (await request.json()) as { name: string };
+        items.push({ id: 'b', name });
+        return HttpResponse.json({ id: 'b', name }, { status: 201 });
+      }),
+    );
+    const app = renderApp('/admin/programs/new');
+    stop = app.stop;
+
+    const crumbs = within(await screen.findByRole('navigation', { name: 'Breadcrumb' }));
+    expect(crumbs.getByRole('link', { name: 'Programs' }).getAttribute('href')).toBe(
+      '/admin/programs',
+    );
+    fireEvent.change(await screen.findByLabelText('Name'), { target: { value: 'Leadership' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Create program' }));
+
+    expect(await screen.findByText('Leadership')).toBeTruthy();
+    expect(app.router.state.location.pathname).toBe('/admin/programs');
   });
 });
