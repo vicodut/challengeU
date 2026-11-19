@@ -1,0 +1,27 @@
+{
+  "app": { "name": "ChallengeU" },
+  "login": {
+    "title": "Connexion",
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "submit": "Se connecter",
+    "errors": {
+      "wrongCredentials": "Nom d'utilisateur ou mot de passe incorrect.",
+      "server": "Une erreur est survenue côté serveur. Veuillez réessayer.",
+      "network": "Impossible de joindre le serveur. Veuillez réessayer."
+    }
+  },
+  "home": {
+    "signedInAs": "Connecté en tant que {{name}}",
+    "signedIn": "Connecté",
+    "role": "Rôle : {{role}}",
+    "logout": "Se déconnecter"
+  },
+  "health": {
+    "title": "État de l'API",
+    "checking": "Vérification…",
+    "unavailable": "API indisponible",
+    "ok": "API {{status}} · base de données {{database}}",
+    "serverTime": "Heure du serveur : {{time}}"
+  }
+}
