@@ -4,3 +4,5 @@ export { CreateProgram } from './application/create-program';
 export { ProgramNameTakenError } from './domain/errors';
 export { ListPrograms } from './application/list-programs';
 export { AssignCoach } from './application/assign-coach';
+export { RegisterStudent } from './application/register-student';
+export { ENROLLMENT_REPOSITORY } from './application/ports';

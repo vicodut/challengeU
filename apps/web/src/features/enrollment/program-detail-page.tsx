@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { Link, useParams } from 'react-router';
 import {
   getGetProgramQueryKey,
   useAssignCoach,
@@ -98,7 +98,12 @@ export function ProgramDetailPage() {
         ) : null}
       </div>
       <div className="flex flex-col gap-2">
-        <h3 className="text-lg font-medium">{t('programs.students')}</h3>
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-medium">{t('programs.students')}</h3>
+          <Link to={`/admin/students/new?programId=${programId}`} className="text-sm underline">
+            {t('programs.assignStudent')}
+          </Link>
+        </div>
         {detail.students.length === 0 ? (
           <p>{t('programs.noStudents')}</p>
         ) : (

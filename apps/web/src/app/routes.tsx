@@ -2,7 +2,14 @@ import { useTranslation } from 'react-i18next';
 import { createBrowserRouter, Navigate, redirect } from 'react-router';
 import { BlockPage, BlocksPage, NewBlockPage } from '@/features/availability';
 import { HealthStatus } from '@/features/ops';
-import { NewProgramPage, ProgramDetailPage, ProgramsPage } from '@/features/enrollment';
+import {
+  NewProgramPage,
+  ProgramDetailPage,
+  ProgramsPage,
+  RegisterStudentPage,
+  StudentDetailPage,
+  StudentsPage,
+} from '@/features/enrollment';
 import { LoginPage } from '@/features/identity';
 import { useGetMe } from '@/api/generated/endpoints/identity/identity';
 import { getCredentials } from '@/shared/auth/session';
@@ -108,6 +115,19 @@ export const routes = [
                 path: ':programId',
                 handle: { crumb: 'programs.detail' },
                 element: <ProgramDetailPage />,
+              },
+            ],
+          },
+          {
+            path: 'students',
+            handle: { crumb: 'nav.students' },
+            children: [
+              { index: true, element: <StudentsPage /> },
+              { path: 'new', handle: { crumb: 'students.new' }, element: <RegisterStudentPage /> },
+              {
+                path: ':studentId',
+                handle: { crumb: 'students.detail' },
+                element: <StudentDetailPage />,
               },
             ],
           },
