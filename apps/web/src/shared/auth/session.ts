@@ -48,8 +48,8 @@ export function onUnauthorized(listener: UnauthorizedListener): () => void {
   };
 }
 
-/** Called by the fetch mutator on any 401: forget the credentials, then tell the app. */
-export function handleUnauthorized(): void {
+/** Ends the session (logout, or a 401 seen by the mutator): forget the credentials, tell the app. */
+export function endSession(): void {
   clearCredentials();
   listeners.forEach((listener) => {
     listener();
