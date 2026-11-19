@@ -13,3 +13,8 @@ export function databaseUrl(): string {
 export function apiPort(): number {
   return Number(required('API_PORT'));
 }
+
+/** Only set when running through the test harness (`pnpm test`). */
+export function testDatabaseUrl(): string {
+  return required('TEST_DATABASE_URL');
+}
