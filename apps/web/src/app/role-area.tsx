@@ -21,6 +21,7 @@ const NAV: Record<Role, { to: string; labelKey: string }[]> = {
     { to: '/admin', labelKey: 'nav.overview' },
     { to: '/admin/users', labelKey: 'nav.users' },
     { to: '/admin/programs', labelKey: 'nav.programs' },
+    { to: '/admin/students', labelKey: 'nav.students' },
   ],
 };
 

@@ -48,7 +48,7 @@ describe('enrollment: students', () => {
               get: (target, key, receiver) =>
                 key === 'add' && failEnrollment
                   ? () => Promise.reject(new Error('boom'))
-                  : Reflect.get(target, key, receiver),
+                  : (Reflect.get(target, key, receiver) as unknown),
             }),
           inject: [DRIZZLE],
         }),
@@ -57,9 +57,10 @@ describe('enrollment: students', () => {
     const programs = await request(testApp.http)
       .get('/api/v1/programs')
       .set('Authorization', admin);
-    academic = (programs.body as { items: { id: string; name: string }[] }).items.find(
-      (p) => p.name === 'Academic Success',
-    )!.id;
+    academic =
+      (programs.body as { items: { id: string; name: string }[] }).items.find(
+        (p) => p.name === 'Academic Success',
+      )?.id ?? '';
   });
 
   afterAll(async () => {

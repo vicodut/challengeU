@@ -14,11 +14,19 @@ export async function seedStudents(
   registerStudent: RegisterStudent,
 ): Promise<void> {
   const programs = await listPrograms.execute();
-  for (const { role: _role, ...student } of SEED_USERS.filter(({ role }) => role === 'student')) {
-    const program = programs.find((p) => p.name === SEED_ENROLLMENTS[student.username]);
+  for (const { username, password, displayName, timeZone } of SEED_USERS.filter(
+    ({ role }) => role === 'student',
+  )) {
+    const program = programs.find((p) => p.name === SEED_ENROLLMENTS[username]);
     if (!program) continue;
     try {
-      await registerStudent.execute({ ...student, programId: program.id });
+      await registerStudent.execute({
+        username,
+        password,
+        displayName,
+        timeZone,
+        programId: program.id,
+      });
     } catch (error) {
       if (!(error instanceof UsernameTakenError)) throw error;
     }
