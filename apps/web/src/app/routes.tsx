@@ -8,6 +8,7 @@ import {
   ProgramsPage,
   RegisterStudentPage,
   StudentDetailPage,
+  StudentCoachesPage,
   StudentsPage,
 } from '@/features/enrollment';
 import { LoginPage } from '@/features/identity';
@@ -62,6 +63,11 @@ export const routes = [
         handle: { crumb: 'area.student' },
         children: [
           { index: true, element: <PlaceholderPage titleKey="nav.overview" /> },
+          {
+            path: 'coaches',
+            handle: { crumb: 'nav.coaches' },
+            element: <StudentCoachesPage />,
+          },
           {
             path: 'sessions',
             handle: { crumb: 'nav.sessions' },

@@ -29,7 +29,8 @@
     "availability": "Availability",
     "users": "Users",
     "programs": "Programs",
-    "students": "Students"
+    "students": "Students",
+    "coaches": "Coaches"
   },
   "breadcrumb": {
     "label": "Breadcrumb"
@@ -101,6 +102,12 @@
       "network": "Could not reach the server. Please try again."
     },
     "assignStudent": "Assign student"
+  },
+  "studentCoaches": {
+    "title": "Your coaches",
+    "empty": "No coaches in your program yet.",
+    "loadError": "Could not load your coaches.",
+    "week": "See {{name}}'s week"
   },
   "students": {
     "title": "Students",

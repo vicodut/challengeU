@@ -29,7 +29,8 @@
     "availability": "Disponibilités",
     "users": "Utilisateurs",
     "programs": "Programmes",
-    "students": "Étudiants"
+    "students": "Étudiants",
+    "coaches": "Coachs"
   },
   "breadcrumb": {
     "label": "Fil d'Ariane"
@@ -101,6 +102,12 @@
       "network": "Impossible de joindre le serveur. Veuillez réessayer."
     },
     "assignStudent": "Assigner un étudiant"
+  },
+  "studentCoaches": {
+    "title": "Vos coachs",
+    "empty": "Aucun coach dans votre programme pour le moment.",
+    "loadError": "Impossible de charger vos coachs.",
+    "week": "Voir la semaine de {{name}}"
   },
   "students": {
     "title": "Étudiants",
