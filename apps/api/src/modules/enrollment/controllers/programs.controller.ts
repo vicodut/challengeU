@@ -1,4 +1,13 @@
-import { Body, Controller, Get, HttpCode, Param, ParseUUIDPipe, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  ParseUUIDPipe,
+  Post,
+} from '@nestjs/common';
 import {
   ApiBasicAuth,
   ApiCreatedResponse,
@@ -60,7 +69,7 @@ export class AssignCoachRequest {
   coachId!: string;
 }
 
-const UUID_PIPE = new ParseUUIDPipe({ errorHttpStatusCode: 422 });
+const UUID_PIPE = new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY });
 
 @ApiTags('enrollment')
 @ApiBasicAuth()
