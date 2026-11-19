@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Param,
@@ -21,6 +22,7 @@ import { IsISO8601, IsInt, IsOptional, Matches } from 'class-validator';
 import { ApiProblemResponses } from '../../../shared/errors/api-problem-response.decorator';
 import { ApiPageResponse, PageQuery } from '../../../shared/pagination/cursor-page';
 import { CurrentUser, Roles, type AuthenticatedUser } from '../../identity';
+import { DeleteBlock } from '../application/delete-block';
 import { PublishBlock } from '../application/publish-block';
 import { GetBlock, ListBlocks } from '../application/read-blocks';
 import { BLOCK_DURATIONS, type AvailabilityBlock } from '../domain/availability-block';
@@ -54,6 +56,11 @@ export class ListedBlockResponse extends BlockResponse {
   bookedSessionCount!: number;
 }
 
+export class DeleteBlockResponse {
+  @ApiProperty({ minimum: 0, description: 'Booked sessions cancelled by the deletion' })
+  cancelledSessionCount!: number;
+}
+
 export class ListBlocksQuery extends PageQuery {
   @ApiPropertyOptional({ format: 'date-time', description: 'Defaults to now' })
   @IsOptional()
@@ -82,6 +89,7 @@ export class AvailabilityController {
     private readonly publishBlock: PublishBlock,
     private readonly listBlocks: ListBlocks,
     private readonly getBlock: GetBlock,
+    private readonly deleteBlock: DeleteBlock,
   ) {}
 
   @Get()
@@ -109,6 +117,18 @@ export class AvailabilityController {
     @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: string,
   ): Promise<ListedBlockResponse> {
     return toListed(await this.getBlock.execute(caller.userId, id));
+  }
+
+  @Delete(':id')
+  @Roles('coach')
+  @ApiOperation({ operationId: 'deleteBlock', summary: "Delete one of the caller's empty blocks" })
+  @ApiOkResponse({ type: DeleteBlockResponse })
+  @ApiProblemResponses(401, 403, 404, 409)
+  remove(
+    @CurrentUser() caller: AuthenticatedUser,
+    @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: string,
+  ): Promise<DeleteBlockResponse> {
+    return this.deleteBlock.execute(caller.userId, id);
   }
 
   @Post()

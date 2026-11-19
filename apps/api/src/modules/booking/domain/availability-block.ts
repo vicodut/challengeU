@@ -1,4 +1,9 @@
-import { BlockInPastError, BlockNotAlignedError, InvalidBlockDurationError } from './errors';
+import {
+  BlockHasBookingsError,
+  BlockInPastError,
+  BlockNotAlignedError,
+  InvalidBlockDurationError,
+} from './errors';
 
 export const BLOCK_DURATIONS = [30, 60] as const;
 const MINUTE = 60_000;
@@ -23,4 +28,9 @@ export function createBlock(
   if (input.startsAt <= now) throw new BlockInPastError();
   const endsAt = new Date(input.startsAt.getTime() + input.durationMinutes * MINUTE);
   return { id: input.id, coachId: input.coachId, startsAt: input.startsAt, endsAt };
+}
+
+/** Only an empty block may be deleted. */
+export function assertBlockEmpty(activeBookings: number): void {
+  if (activeBookings > 0) throw new BlockHasBookingsError();
 }

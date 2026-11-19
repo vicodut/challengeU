@@ -42,3 +42,9 @@ export class BlockNotFoundError extends BookingError {
     super('BLOCK_NOT_FOUND', 'not_found', 'No such availability block');
   }
 }
+
+export class BlockHasBookingsError extends BookingError {
+  constructor() {
+    super('BLOCK_HAS_BOOKINGS', 'conflict', 'A block with bookings cannot be deleted');
+  }
+}

@@ -55,6 +55,14 @@ export class DrizzleBlockRepository implements BlockRepository {
     return row ?? null;
   }
 
+  async remove(id: string, coachId: string): Promise<boolean> {
+    const rows = await this.db
+      .delete(availabilityBlocks)
+      .where(and(eq(availabilityBlocks.id, id), eq(availabilityBlocks.coachId, coachId)))
+      .returning({ id: availabilityBlocks.id });
+    return rows.length > 0;
+  }
+
   async add(block: AvailabilityBlock): Promise<void> {
     try {
       await this.db.insert(availabilityBlocks).values(block);
