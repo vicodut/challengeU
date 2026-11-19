@@ -75,7 +75,7 @@ describe('enrollment: program coaches', () => {
       id: academic,
       name: 'Academic Success',
       coaches: coaches.map(({ id, displayName }) => ({ id, displayName })),
-      students: [],
+      students: [{ id: expect.any(String) as string, displayName: 'Student A' }],
     });
     expect(c.coaches).toEqual([{ id: coachB, displayName: 'Coach B' }]);
   });

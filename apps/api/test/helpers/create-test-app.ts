@@ -6,8 +6,14 @@ import { applyApiPrefixAndDocs } from '../../src/app.setup';
 import { CLOCK } from '../../src/shared/clock/clock.port';
 import { seedUsers } from '../../src/db/seed-users';
 import { seedPrograms } from '../../src/db/seed-programs';
+import { seedStudents } from '../../src/db/seed-students';
 import { seedProgramCoaches } from '../../src/db/seed-program-coaches';
-import { AssignCoach, CreateProgram, ListPrograms } from '../../src/modules/enrollment';
+import {
+  AssignCoach,
+  CreateProgram,
+  ListPrograms,
+  RegisterStudent,
+} from '../../src/modules/enrollment';
 import {
   CreateAccount,
   PROFILE_DIRECTORY,
@@ -61,6 +67,7 @@ export async function createTestApp(options: CreateTestAppOptions = {}): Promise
         app.get(AssignCoach),
         app.get<ProfileDirectory>(PROFILE_DIRECTORY),
       );
+      await seedStudents(app.get(ListPrograms), app.get(RegisterStudent));
     },
     close: () => app.close(),
   };

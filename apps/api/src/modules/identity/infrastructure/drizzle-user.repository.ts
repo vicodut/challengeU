@@ -40,4 +40,13 @@ export class DrizzleUserRepository implements UserRepository {
       throw error;
     }
   }
+
+  async remove(id: string): Promise<void> {
+    const user = await this.findById(id);
+    if (!user) return;
+    await this.db.transaction(async (tx) => {
+      await tx.delete(ROLE_TABLES[user.role]).where(eq(ROLE_TABLES[user.role].userId, id));
+      await tx.delete(users).where(eq(users.id, id));
+    });
+  }
 }
