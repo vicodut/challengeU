@@ -15,6 +15,7 @@
   },
   "home": {
     "signedInAs": "Connecté en tant que {{name}}",
+    "suspended": "Votre compte est suspendu. Veuillez contacter l'équipe des inscriptions.",
     "logout": "Se déconnecter"
   },
   "area": {
@@ -129,6 +130,11 @@
     "statusLabel": "Statut",
     "statusChangedAt": "Statut modifié",
     "create": "Inscrire l'étudiant",
+    "action": {
+      "suspended": "Suspendre l'étudiant",
+      "active": "Réactiver l'étudiant"
+    },
+    "statusError": "Impossible de modifier le statut. Veuillez réessayer.",
     "status": {
       "active": "Actif",
       "suspended": "Suspendu"

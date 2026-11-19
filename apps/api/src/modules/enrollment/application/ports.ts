@@ -21,6 +21,7 @@ export interface EnrollmentRepository {
   add(enrollment: Enrollment): Promise<void>;
   findByStudentId(studentId: string): Promise<EnrollmentView | null>;
   list(): Promise<EnrollmentView[]>;
+  updateStatus(enrollment: Enrollment): Promise<void>;
   studentIdsOf(programId: string): Promise<string[]>;
 }
 
