@@ -1,13 +1,13 @@
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../app.module';
-import { applyGlobalConfig, createOpenApiDocument } from '../app.setup';
+import { applyApiPrefix, createOpenApiDocument } from '../app.setup';
 
 /** Boots the Nest app without listening and returns the serialized OpenAPI spec. */
 export async function buildOpenApiSpec(): Promise<string> {
   const app = await NestFactory.create(AppModule, { logger: false });
   try {
-    applyGlobalConfig(app);
+    applyApiPrefix(app);
     return `${JSON.stringify(createOpenApiDocument(app), null, 2)}\n`;
   } finally {
     await app.close();
