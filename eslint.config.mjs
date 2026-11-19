@@ -53,26 +53,45 @@ export default tseslint.config(
         { type: 'api-module', pattern: 'src/modules/*', capture: ['module'] },
         { type: 'api-shared', pattern: 'src/shared' },
         { type: 'api-other', pattern: 'src/*' },
+        { type: 'api-root', pattern: 'src/*.ts', mode: 'file' },
       ],
     },
     rules: {
+      // Another module's root is reachable only through its index.ts (ports and events).
+      'boundaries/entry-point': [
+        'error',
+        { default: 'allow', rules: [{ target: ['api-module'], disallow: '*', allow: 'index.ts' }] },
+      ],
       'boundaries/element-types': [
         'error',
         {
           default: 'allow',
           rules: [
-            // Modules are reached only through their index.ts (ports and events): importing
-            // any layer folder of ANOTHER module is forbidden.
-            ...layers.map((from) => ({
-              from: [`api-${from}`],
+            // A module's own files may not reach into ANOTHER module's layers.
+            ...[...layers.map((layer) => `api-${layer}`), 'api-module'].map((from) => ({
+              from: [from],
               disallow: layers.map((to) => [`api-${to}`, { module: '!${from.module}' }]),
               message: 'Import other modules only through their public index.ts',
             })),
-            // Domain is pure: it may only import from itself.
+            // Code outside modules (shared, app shell, tools) may not reach into any layer.
+            {
+              from: ['api-shared', 'api-other', 'api-root'],
+              disallow: layers.map((to) => `api-${to}`),
+              message: 'Import modules only through their public index.ts',
+            },
+            // Domain is pure: only itself. No other layers, no shared/ (Clock etc.), no app code;
+            // functions receive `now: Date` as an argument.
             {
               from: ['api-domain'],
-              disallow: ['api-application', 'api-infrastructure', 'api-controllers'],
-              message: 'The domain layer must not depend on other layers',
+              disallow: [
+                'api-application',
+                'api-infrastructure',
+                'api-controllers',
+                'api-shared',
+                'api-other',
+                'api-root',
+              ],
+              message: 'The domain layer must stay pure: no other layers and no shared/',
             },
             // Application depends on ports, not on adapters or HTTP.
             {
@@ -146,6 +165,7 @@ export default tseslint.config(
     },
   },
   // The import resolver cannot follow the "@/" alias, so guard it with plain patterns.
+  // Anyone may import a feature only through its public index.
   {
     files: ['apps/web/src/**/*.{ts,tsx}'],
     rules: {
@@ -162,6 +182,7 @@ export default tseslint.config(
       ],
     },
   },
+  // Features are isolated from other features and from the app shell.
   {
     files: ['apps/web/src/features/**/*.{ts,tsx}'],
     rules: {
@@ -170,8 +191,25 @@ export default tseslint.config(
         {
           patterns: [
             {
-              group: ['@/features/*', '@/features/*/*', '@/app/*'],
+              group: ['@/features', '@/features/*', '@/features/*/*', '@/app', '@/app/*'],
               message: 'Features are isolated: no imports from other features or the app shell.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  // shared/ sits below features and the app shell.
+  {
+    files: ['apps/web/src/shared/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@/features', '@/features/*', '@/features/*/*', '@/app', '@/app/*'],
+              message: 'shared/ must not depend on features or the app shell.',
             },
           ],
         },
