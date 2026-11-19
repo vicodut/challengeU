@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { createBrowserRouter, Navigate, redirect } from 'react-router';
+import { createBrowserRouter, Link, Navigate, redirect } from 'react-router';
+import { NewBlockPage } from '@/features/availability';
 import { HealthStatus } from '@/features/ops';
 import { LoginPage } from '@/features/identity';
 import { useGetMe } from '@/api/generated/endpoints/identity/identity';
@@ -34,6 +35,23 @@ function PlaceholderPage({ titleKey }: { titleKey: string }) {
   return <h2 className="text-2xl font-semibold">{t(titleKey)}</h2>;
 }
 
+function NewBlockRoute() {
+  const { data } = useGetMe();
+  return data?.status === 200 ? <NewBlockPage timeZone={data.data.timeZone} /> : null;
+}
+
+function AvailabilityPage() {
+  const { t } = useTranslation();
+  return (
+    <>
+      <PlaceholderPage titleKey="nav.availability" />
+      <Link to="new" className="underline">
+        {t('availability.list.new')}
+      </Link>
+    </>
+  );
+}
+
 export const routes = [
   { path: '/', element: <StatusPage /> },
   { path: LOGIN_PATH, element: <LoginPage /> },
@@ -64,7 +82,14 @@ export const routes = [
           {
             path: 'availability',
             handle: { crumb: 'nav.availability' },
-            element: <PlaceholderPage titleKey="nav.availability" />,
+            children: [
+              { index: true, element: <AvailabilityPage /> },
+              {
+                path: 'new',
+                handle: { crumb: 'availability.new.title' },
+                element: <NewBlockRoute />,
+              },
+            ],
           },
         ],
       },
