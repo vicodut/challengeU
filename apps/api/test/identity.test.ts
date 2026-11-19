@@ -35,6 +35,36 @@ describe('identity: Basic auth and current user', () => {
     });
   });
 
+  // Literal copy of the spec #1 "Persistence" seed table, deliberately NOT derived from SEED_USERS.
+  it.each([
+    ['admin', 'admin$123', 'admin', 'America/Toronto'],
+    ['coachA', 'coachA$123', 'coach', 'America/Toronto'],
+    ['coachB', 'coachB$123', 'coach', 'Europe/Paris'],
+    ['studentA', 'studentA$123', 'student', 'America/Vancouver'],
+    ['studentB', 'studentB$123', 'student', 'Europe/Paris'],
+  ])(
+    'seeds %s with the password, role and zone the spec lists',
+    async (username, password, role, timeZone) => {
+      const response = await request(testApp.http)
+        .get('/api/v1/me')
+        .set('Authorization', basicAuthHeader(username, password))
+        .expect(200);
+
+      expect(response.body).toMatchObject({ username, role, timeZone });
+    },
+  );
+
+  it('seeds exactly the five spec users', async () => {
+    const pool = testApp.app.get<Pool>(PG_POOL);
+    const { rows } = await pool.query<{ username: string }>(
+      'SELECT username FROM users ORDER BY username',
+    );
+
+    expect(rows.map((row) => row.username)).toEqual(
+      ['admin', 'coachA', 'coachB', 'studentA', 'studentB'].sort(),
+    );
+  });
+
   it('rejects a wrong password with a 401 Problem Details', async () => {
     const response = await request(testApp.http)
       .get('/api/v1/me')
