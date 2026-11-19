@@ -9,6 +9,41 @@ const rootDir = dirname(fileURLToPath(import.meta.url));
 // Layers of a backend module (apps/api/src/modules/<name>/<layer>).
 const layers = ['domain', 'application', 'infrastructure', 'controllers'];
 
+// Web feature folder -> the Orval tag module it owns (src/api/generated/endpoints/<tag>).
+// A feature without an entry may not use any generated endpoint module.
+const featureTags = { ops: 'ops' };
+
+function webFeatureIsolation() {
+  const isolation = (ownTag) => ({
+    patterns: [
+      {
+        group: ['@/features', '@/features/*', '@/features/*/*', '@/app', '@/app/*'],
+        message: 'Features are isolated: no imports from other features or the app shell.',
+      },
+      {
+        group: [
+          '@/api/generated/endpoints/*',
+          '@/api/generated/endpoints/*/*',
+          ...(ownTag
+            ? [`!@/api/generated/endpoints/${ownTag}`, `!@/api/generated/endpoints/${ownTag}/*`]
+            : []),
+        ],
+        message: "A feature may use only its own tag's generated client module.",
+      },
+    ],
+  });
+  return [
+    {
+      files: ['apps/web/src/features/**/*.{ts,tsx}'],
+      rules: { 'no-restricted-imports': ['error', isolation(undefined)] },
+    },
+    ...Object.entries(featureTags).map(([feature, tag]) => ({
+      files: [`apps/web/src/features/${feature}/**/*.{ts,tsx}`],
+      rules: { 'no-restricted-imports': ['error', isolation(tag)] },
+    })),
+  ];
+}
+
 export default tseslint.config(
   {
     ignores: [
@@ -182,23 +217,9 @@ export default tseslint.config(
       ],
     },
   },
-  // Features are isolated from other features and from the app shell.
-  {
-    files: ['apps/web/src/features/**/*.{ts,tsx}'],
-    rules: {
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              group: ['@/features', '@/features/*', '@/features/*/*', '@/app', '@/app/*'],
-              message: 'Features are isolated: no imports from other features or the app shell.',
-            },
-          ],
-        },
-      ],
-    },
-  },
+  // Features are isolated from other features and from the app shell, and each may use only
+  // its own generated client tag module (feature folder -> OpenAPI tag).
+  ...webFeatureIsolation(),
   // shared/ sits below features and the app shell.
   {
     files: ['apps/web/src/shared/**/*.{ts,tsx}'],
