@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { createBrowserRouter, Link, Navigate, redirect } from 'react-router';
-import { NewBlockPage } from '@/features/availability';
+import { createBrowserRouter, Navigate, redirect } from 'react-router';
+import { BlockPage, BlocksPage, NewBlockPage } from '@/features/availability';
 import { HealthStatus } from '@/features/ops';
 import { NewProgramPage, ProgramsPage } from '@/features/enrollment';
 import { LoginPage } from '@/features/identity';
@@ -36,21 +36,9 @@ function PlaceholderPage({ titleKey }: { titleKey: string }) {
   return <h2 className="text-2xl font-semibold">{t(titleKey)}</h2>;
 }
 
-function NewBlockRoute() {
+function ZonedRoute({ page: Page }: { page: typeof BlocksPage }) {
   const { data } = useGetMe();
-  return data?.status === 200 ? <NewBlockPage timeZone={data.data.timeZone} /> : null;
-}
-
-function AvailabilityPage() {
-  const { t } = useTranslation();
-  return (
-    <>
-      <PlaceholderPage titleKey="nav.availability" />
-      <Link to="new" className="underline">
-        {t('availability.list.new')}
-      </Link>
-    </>
-  );
+  return data?.status === 200 ? <Page timeZone={data.data.timeZone} /> : null;
 }
 
 export const routes = [
@@ -84,11 +72,16 @@ export const routes = [
             path: 'availability',
             handle: { crumb: 'nav.availability' },
             children: [
-              { index: true, element: <AvailabilityPage /> },
+              { index: true, element: <ZonedRoute page={BlocksPage} /> },
               {
                 path: 'new',
                 handle: { crumb: 'availability.new.title' },
-                element: <NewBlockRoute />,
+                element: <ZonedRoute page={NewBlockPage} />,
+              },
+              {
+                path: ':id',
+                handle: { crumb: 'availability.detail.title' },
+                element: <ZonedRoute page={BlockPage} />,
               },
             ],
           },
