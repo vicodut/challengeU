@@ -1,18 +1,29 @@
-import { Body, Controller, Get, HttpStatus, Param, ParseUUIDPipe, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import {
   ApiBasicAuth,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
   ApiProperty,
+  ApiPropertyOptional,
   ApiTags,
 } from '@nestjs/swagger';
-import { IsString, IsUUID, MinLength } from 'class-validator';
+import { IsIn, IsOptional, IsString, IsUUID, MinLength } from 'class-validator';
 import { Roles } from '../../identity';
 import { ApiProblemResponses } from '../../../shared/errors/api-problem-response.decorator';
 import { GetStudent, type StudentView } from '../application/get-student';
 import { ListStudents } from '../application/list-students';
 import { RegisterStudent } from '../application/register-student';
+import { UpdateStudent } from '../application/update-student';
 import { ENROLLMENT_STATUSES, type EnrollmentStatus } from '../domain/enrollment';
 
 export class RegisterStudentRequest {
@@ -38,6 +49,18 @@ export class RegisterStudentRequest {
   @ApiProperty({ format: 'uuid' })
   @IsUUID()
   programId!: string;
+}
+
+export class UpdateStudentRequest {
+  @ApiPropertyOptional({ format: 'uuid', description: 'Move the student to this program' })
+  @IsOptional()
+  @IsUUID()
+  programId?: string;
+
+  @ApiPropertyOptional({ enum: ENROLLMENT_STATUSES })
+  @IsOptional()
+  @IsIn(ENROLLMENT_STATUSES)
+  status?: EnrollmentStatus;
 }
 
 export class RegisteredStudentResponse {
@@ -90,6 +113,7 @@ export class StudentsController {
     private readonly registerStudent: RegisterStudent,
     private readonly listStudents: ListStudents,
     private readonly getStudent: GetStudent,
+    private readonly updateStudent: UpdateStudent,
   ) {}
 
   @Post()
@@ -117,5 +141,19 @@ export class StudentsController {
   @ApiProblemResponses(401, 403, 404, 422)
   async get(@Param('id', UUID_PIPE) id: string): Promise<StudentResponse> {
     return toResponse(await this.getStudent.execute(id));
+  }
+
+  @Patch(':id')
+  @ApiOperation({
+    operationId: 'updateStudent',
+    summary: "Move a student to another program and/or change the student's status (admin)",
+  })
+  @ApiOkResponse({ type: StudentResponse })
+  @ApiProblemResponses(401, 403, 404, 422)
+  async update(
+    @Param('id', UUID_PIPE) id: string,
+    @Body() body: UpdateStudentRequest,
+  ): Promise<StudentResponse> {
+    return toResponse(await this.updateStudent.execute(id, body));
   }
 }

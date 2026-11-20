@@ -129,6 +129,8 @@
     "statusLabel": "Statut",
     "statusChangedAt": "Statut modifié",
     "create": "Inscrire l'étudiant",
+    "move": "Changer de programme",
+    "moved": "Programme mis à jour.",
     "status": {
       "active": "Actif",
       "suspended": "Suspendu"
