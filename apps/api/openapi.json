@@ -291,6 +291,80 @@
         "tags": [
           "booking"
         ]
+      },
+      "delete": {
+        "operationId": "deleteBlock",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteBlockResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid credentials",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The role is not allowed to do this",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found (or not owned by the caller)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict with the current state",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ],
+        "summary": "Delete one of the caller's empty blocks",
+        "tags": [
+          "booking"
+        ]
       }
     },
     "/api/v1/programs": {
@@ -1073,6 +1147,19 @@
           "startsAt",
           "durationMinutes",
           "bookedSessionCount"
+        ]
+      },
+      "DeleteBlockResponse": {
+        "type": "object",
+        "properties": {
+          "cancelledSessionCount": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Booked sessions cancelled by the deletion"
+          }
+        },
+        "required": [
+          "cancelledSessionCount"
         ]
       },
       "PublishBlockRequest": {

@@ -75,7 +75,19 @@
       "start": "Début ({{timeZone}})",
       "booked": "Séances réservées",
       "notFound": "Plage introuvable.",
+      "delete": "Supprimer cette plage",
       "back": "Retour à mes plages"
+    },
+    "delete": {
+      "title": "Supprimer la plage",
+      "question": "Supprimer cette plage ? Cette action est irréversible.",
+      "confirm": "Oui, supprimer",
+      "cancel": "Annuler",
+      "errors": {
+        "BLOCK_HAS_BOOKINGS": "Cette plage a des réservations et ne peut pas être supprimée.",
+        "BLOCK_NOT_FOUND": "Plage introuvable.",
+        "server": "Une erreur serveur s'est produite. Réessayez."
+      }
     }
   },
   "programs": {
