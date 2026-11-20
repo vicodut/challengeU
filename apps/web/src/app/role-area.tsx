@@ -11,6 +11,7 @@ export type Role = 'student' | 'coach' | 'admin';
 const NAV: Record<Role, { to: string; labelKey: string }[]> = {
   student: [
     { to: '/student', labelKey: 'nav.overview' },
+    { to: '/student/coaches', labelKey: 'nav.coaches' },
     { to: '/student/sessions', labelKey: 'nav.sessions' },
   ],
   coach: [

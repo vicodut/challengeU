@@ -6,3 +6,5 @@ export { ListPrograms } from './application/list-programs';
 export { AssignCoach } from './application/assign-coach';
 export { RegisterStudent } from './application/register-student';
 export { ENROLLMENT_REPOSITORY } from './application/ports';
+export { CheckBookingEligibility } from './application/check-booking-eligibility';
+export type { BookingEligibility } from './domain/enrollment';
