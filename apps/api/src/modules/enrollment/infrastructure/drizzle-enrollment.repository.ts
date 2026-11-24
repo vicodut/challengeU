@@ -37,6 +37,13 @@ export class DrizzleEnrollmentRepository implements EnrollmentRepository {
     return row ?? null;
   }
 
+  async updateStatus({ studentId, status, statusChangedAt }: Enrollment): Promise<void> {
+    await this.db
+      .update(enrollments)
+      .set({ status, statusChangedAt })
+      .where(eq(enrollments.studentId, studentId));
+  }
+
   list(): Promise<EnrollmentView[]> {
     return this.db
       .select(view)

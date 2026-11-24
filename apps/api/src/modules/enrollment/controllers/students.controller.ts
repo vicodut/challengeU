@@ -1,4 +1,13 @@
-import { Body, Controller, Get, HttpStatus, Param, ParseUUIDPipe, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import {
   ApiBasicAuth,
   ApiCreatedResponse,
@@ -7,9 +16,10 @@ import {
   ApiProperty,
   ApiTags,
 } from '@nestjs/swagger';
-import { IsString, IsUUID, MinLength } from 'class-validator';
+import { IsIn, IsString, IsUUID, MinLength } from 'class-validator';
 import { Roles } from '../../identity';
 import { ApiProblemResponses } from '../../../shared/errors/api-problem-response.decorator';
+import { ChangeStudentStatus } from '../application/change-student-status';
 import { GetStudent, type StudentView } from '../application/get-student';
 import { ListStudents } from '../application/list-students';
 import { RegisterStudent } from '../application/register-student';
@@ -68,6 +78,12 @@ export class StudentResponse {
   statusChangedAt!: string;
 }
 
+export class ChangeStudentStatusRequest {
+  @ApiProperty({ enum: ENROLLMENT_STATUSES })
+  @IsIn(ENROLLMENT_STATUSES)
+  status!: EnrollmentStatus;
+}
+
 export class StudentListResponse {
   @ApiProperty({ type: [StudentResponse] })
   items!: StudentResponse[];
@@ -90,6 +106,7 @@ export class StudentsController {
     private readonly registerStudent: RegisterStudent,
     private readonly listStudents: ListStudents,
     private readonly getStudent: GetStudent,
+    private readonly changeStudentStatus: ChangeStudentStatus,
   ) {}
 
   @Post()
@@ -116,6 +133,21 @@ export class StudentsController {
   @ApiOkResponse({ type: StudentResponse })
   @ApiProblemResponses(401, 403, 404, 422)
   async get(@Param('id', UUID_PIPE) id: string): Promise<StudentResponse> {
+    return toResponse(await this.getStudent.execute(id));
+  }
+
+  @Patch(':id')
+  @ApiOperation({
+    operationId: 'changeStudentStatus',
+    summary: 'Suspend or reactivate a student (admin)',
+  })
+  @ApiOkResponse({ type: StudentResponse })
+  @ApiProblemResponses(401, 403, 404, 422)
+  async changeStatus(
+    @Param('id', UUID_PIPE) id: string,
+    @Body() { status }: ChangeStudentStatusRequest,
+  ): Promise<StudentResponse> {
+    await this.changeStudentStatus.execute(id, status);
     return toResponse(await this.getStudent.execute(id));
   }
 }

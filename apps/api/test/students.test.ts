@@ -159,4 +159,65 @@ describe('enrollment: students', () => {
     await request(testApp.http).get('/api/v1/students').set('Authorization', auth).expect(403);
     await request(testApp.http).get('/api/v1/students').expect(401);
   });
+
+  describe('suspend and reactivate', () => {
+    const studentA = basicAuthHeader('studentA', 'studentA$123');
+    const me = async (auth: string) =>
+      (await request(testApp.http).get('/api/v1/me').set('Authorization', auth).expect(200))
+        .body as {
+        studentStatus?: string;
+      };
+    const setStatus = (id: string, status: unknown, auth = admin) =>
+      request(testApp.http)
+        .patch(`/api/v1/students/${id}`)
+        .set('Authorization', auth)
+        .send({ status });
+    let id: string;
+
+    beforeAll(async () => {
+      id = (await list()).find((s) => s.displayName === 'Student A')?.id ?? '';
+    });
+
+    it('suspends then reactivates, stamping the change time and reflecting it in /me', async () => {
+      expect((await me(studentA)).studentStatus).toBe('active');
+
+      testApp.clock.set('2030-02-01T10:00:00.000Z');
+      const suspended = await setStatus(id, 'suspended').expect(200);
+      expect(suspended.body).toMatchObject({
+        id,
+        status: 'suspended',
+        statusChangedAt: '2030-02-01T10:00:00.000Z',
+      });
+      expect((await me(studentA)).studentStatus).toBe('suspended');
+
+      testApp.clock.set('2030-02-02T10:00:00.000Z');
+      await setStatus(id, 'active').expect(200);
+      expect((await me(studentA)).studentStatus).toBe('active');
+
+      // Repeating the current status changes nothing, including the change time.
+      testApp.clock.set('2030-02-03T10:00:00.000Z');
+      const again = await setStatus(id, 'active').expect(200);
+      expect(again.body).toMatchObject({ statusChangedAt: '2030-02-02T10:00:00.000Z' });
+    });
+
+    it('omits studentStatus for non-students', async () => {
+      expect(await me(admin)).not.toHaveProperty('studentStatus');
+    });
+
+    it('answers an unknown student 404, a bad status 422', async () => {
+      await setStatus('11111111-1111-4111-8111-111111111111', 'suspended').expect(404);
+      await setStatus(id, 'banned').expect(422);
+    });
+
+    it.each([
+      ['coachA', 'coachA$123'],
+      ['studentA', 'studentA$123'],
+    ])('is admin-only: %s gets 403', async (user, password) => {
+      await setStatus(id, 'suspended', basicAuthHeader(user, password)).expect(403);
+      await request(testApp.http)
+        .patch(`/api/v1/students/${id}`)
+        .send({ status: 'active' })
+        .expect(401);
+    });
+  });
 });

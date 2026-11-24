@@ -8,4 +8,10 @@ export { DeleteAccount } from './application/delete-account';
 export type { AuthenticatedUser } from './application/authenticated-user';
 export { UsernameTakenError } from './domain/errors';
 export { ROLES, type Role } from './domain/role';
-export { PROFILE_DIRECTORY, type Profile, type ProfileDirectory } from './application/ports';
+export {
+  PROFILE_DIRECTORY,
+  STUDENT_STATUS_LOOKUP,
+  type Profile,
+  type ProfileDirectory,
+  type StudentStatusLookup,
+} from './application/ports';
