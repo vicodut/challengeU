@@ -45,3 +45,9 @@ export class StudentNotFoundError extends EnrollmentError {
     super('STUDENT_NOT_FOUND', 'not_found', `Student ${id} is not enrolled`);
   }
 }
+
+export class EmptyUpdateError extends EnrollmentError {
+  constructor() {
+    super('EMPTY_UPDATE', 'unprocessable', 'Provide programId, status or both');
+  }
+}
