@@ -6,7 +6,7 @@ J'ai pris le choix de générer le projet full avec l'IA (claude code haiku / so
 ~1/4 du temps à définir les specs / domain / architecture et le reste du temps à  implementer.
 Tous les tickets sont décris dans [les issues](https://github.com/vicodut/challengeU/issues), où sont aussi tracker le RAF.
 Chaque PR contiens un diagram mermaid + un screenshot de ce qui a été implementer.
-Le choix à été fait de partir sur une architecture hexagonale avec NextJS en backend et React + Shadcn + Tanstack sur le front.
+Le choix à été fait de partir sur une architecture hexagonale avec NestJS en backend et React + Shadcn + Tanstack sur le front.
 
 ## Prérequis
 
@@ -107,3 +107,40 @@ Les migrations sont dans `apps/api/drizzle/` et numérotées dans l'ordre. Le se
 - Tests HTTP de l'API contre la vraie base PostgreSQL de test : c'est le niveau principal.
 - Tests de composants web avec Testing Library et MSW.
 - Tests unitaires uniquement pour la logique combinatoire (alignement des créneaux, bornes DST).
+
+## Hypothèses / Assumptions
+
+- **Fuseau horaire** : chaque utilisateur a un fuseau IANA (`users.time_zone`, validé contre `Intl.supportedValuesOf('timeZone')`). Le seed couvre Toronto, Vancouver et Paris.
+- **Créneaux en UTC** : les blocs de disponibilité sont stockés en `timestamptz` (instants UTC), commencent à :00 ou :30 UTC et durent 30 ou 60 min (contrainte `CHECK`). Hypothèse : les fuseaux visés ont des décalages en demi-heure, donc un alignement UTC suffit.
+- **Authentification** : HTTP Basic sur toutes les routes, sauf `@Public()`. Mots de passe hashés en argon2id.
+- **Conflit dans le brief** : la section 7 (EN) demande un « simple authentication mechanism », alors que la version FR met l'authentification hors périmètre (« une simple liste pour choisir le coach ou l'élève courant suffit »). J'ai suivi la version EN. **À confirmer.**
+- **Inscriptions séparées** : `enrollments.student_id` et `program_coaches.coach_id` sont des identifiants d'identité, sans clé étrangère vers `identity`. Un étudiant a au plus une inscription (clé primaire).
+- **Heure courante** : toujours fournie par le port `Clock`, jamais lue directement.
+- **Hors périmètre** (brief et choix) : base cloud, paiements, vrais SMS ou courriels, déploiement, UI soignée. Réservation, annulation et messagerie ne sont pas encore implémentées (voir Prochaines étapes).
+
+## Compromis / Trade-offs
+
+- **Basic auth plutôt que sessions ou JWT** : simple et sans état, derrière un seul guard. *Coût* : identifiants renvoyés à chaque requête, stockés en `sessionStorage` (exposés en cas de XSS), pas de révocation côté serveur. *Remplaçable* dans le guard seul.
+- **Drizzle plutôt qu'un ORM complet (Prisma, TypeORM)** : SQL proche de la base, typage léger, migrations SQL lisibles. *Coût* : `drizzle-kit` ne sait pas exprimer les contraintes `EXCLUDE`, donc la migration 0003 est écrite à la main.
+- **Contrainte `EXCLUDE` dans Postgres pour les chevauchements** : deux publications simultanées ne peuvent pas passer, même en course. *Coût* : extension `btree_gist` et erreur `23P01` à traduire en erreur métier ; la seule vérification applicative ne suffit pas.
+- **Monolithe modulaire plutôt que services** : un déploiement, une base, des tests rapides. Les frontières sont imposées par `index.ts` et `eslint-plugin-boundaries`. *Coût* : les modules partagent un processus et une base ; l'extraction d'`enrollment` (prévue l'an prochain) demandera un travail de séparation, limité car les liens sont déjà des identifiants sans clé étrangère.
+- **Node 24 épinglé** (`engine-strict`) : évite les surprises de version. *Coût* : Node 26 fait échouer `pnpm install` ; il faut `nvm use 24`.
+- **Pas de polish UI** : le temps va aux règles métier et aux tests, comme le brief le demande. *Coût* : l'interface est fonctionnelle, pas agréable.
+
+## Prochaines étapes / Next steps
+
+Dans l'ordre, avec les issues GitHub ouvertes :
+
+1. **Réservation étudiant** (#16) : table `sessions`, contrainte d'unicité sur le créneau, plafond de 3 séances à venir, annulation jusqu'à 24 h avant (#19). Un coach voit ses séances (#18), un étudiant voit les siennes (#17).
+2. **Suspension et réactivation** (#9) : règle « un étudiant suspendu voit ses séances mais ne peut rien réserver ».
+3. **Messagerie in-app** (#20, #21, #22) : boîte de réception, statut lu et badge, messages pour réservations et annulations.
+4. **Vue des créneaux libres pour l'étudiant** (#15).
+5. **ADR et glossaire** (#26).
+6. **Polish** : UI, documentation des décisions.
+
+Autres tickets ouverts : #10 (changer de programme), #11 (coachs du programme), #23 (retirer un bloc avec réservations), #24 (désassigner un coach), #25 (seed complet).
+
+## Outils IA utilisés
+
+- **Claude Code** avec les modèles haiku, sonnet et opus, pour générer le projet (voir l'état des lieux).
+- **Agents Orca** : `AGENTS.md` décrit le pipeline (orchestrateur Opus, implémenteurs Sonnet dans des worktrees Orca, revue avec les skills `mattpocock-skills`). Le dépôt ne permet pas de vérifier, commit par commit, quel agent a écrit quel code.
