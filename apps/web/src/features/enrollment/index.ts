@@ -4,3 +4,4 @@ export { ProgramDetailPage } from './program-detail-page';
 export { RegisterStudentPage } from './register-student-page';
 export { StudentDetailPage } from './student-detail-page';
 export { StudentsPage } from './students-page';
+export { StudentCoachesPage } from './student-coaches-page';

@@ -45,3 +45,9 @@ export class StudentNotFoundError extends EnrollmentError {
     super('STUDENT_NOT_FOUND', 'not_found', `Student ${id} is not enrolled`);
   }
 }
+
+export class CoachNotVisibleError extends EnrollmentError {
+  constructor(id: string) {
+    super('COACH_NOT_VISIBLE', 'not_found', `Coach ${id} does not exist or is not in your program`);
+  }
+}

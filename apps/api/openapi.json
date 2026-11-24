@@ -38,53 +38,6 @@
         ]
       }
     },
-    "/api/v1/coaches": {
-      "get": {
-        "operationId": "listCoaches",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CoachListResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Missing or invalid credentials",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "The role is not allowed to do this",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "basic": []
-          }
-        ],
-        "summary": "List all coaches (admin)",
-        "tags": [
-          "enrollment"
-        ]
-      }
-    },
     "/api/v1/availability": {
       "get": {
         "operationId": "listBlocks",
@@ -899,6 +852,129 @@
         ]
       }
     },
+    "/api/v1/coaches": {
+      "get": {
+        "operationId": "listCoaches",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoachListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid credentials",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The role is not allowed to do this",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ],
+        "summary": "List coaches: all for an admin, the own program coaches for a student",
+        "tags": [
+          "enrollment"
+        ]
+      }
+    },
+    "/api/v1/coaches/{id}": {
+      "get": {
+        "operationId": "getCoach",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoachResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid credentials",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The role is not allowed to do this",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found (or not owned by the caller)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed or a business rule was violated",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ],
+        "summary": "One coach; 404 for a student when the coach is outside their program",
+        "tags": [
+          "enrollment"
+        ]
+      }
+    },
     "/api/v1/health": {
       "get": {
         "operationId": "getHealth",
@@ -1040,43 +1116,6 @@
           "displayName",
           "role",
           "timeZone"
-        ]
-      },
-      "CoachResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "displayName": {
-            "type": "string",
-            "example": "Coach A"
-          },
-          "timeZone": {
-            "type": "string",
-            "example": "America/Toronto",
-            "description": "IANA time zone"
-          }
-        },
-        "required": [
-          "id",
-          "displayName",
-          "timeZone"
-        ]
-      },
-      "CoachListResponse": {
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CoachResponse"
-            }
-          }
-        },
-        "required": [
-          "items"
         ]
       },
       "ListedBlockResponse": {
@@ -1372,6 +1411,43 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/StudentResponse"
+            }
+          }
+        },
+        "required": [
+          "items"
+        ]
+      },
+      "CoachResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "displayName": {
+            "type": "string",
+            "example": "Coach A"
+          },
+          "timeZone": {
+            "type": "string",
+            "example": "America/Toronto",
+            "description": "IANA time zone"
+          }
+        },
+        "required": [
+          "id",
+          "displayName",
+          "timeZone"
+        ]
+      },
+      "CoachListResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CoachResponse"
             }
           }
         },
